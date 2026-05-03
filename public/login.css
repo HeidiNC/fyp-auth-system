@@ -32,10 +32,10 @@ body {
 }
 
 .brand-logo {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   display: block;
-  margin: 0 auto 16px;
+  margin: 0 auto 10px;
 }
 
 h1 {
