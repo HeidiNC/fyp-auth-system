@@ -27,6 +27,10 @@ body {
   padding: 30px;
 }
 
+.brand-block {
+  text-align: center;
+}
+
 .eyebrow {
   margin: 0 0 10px;
   color: #2563eb;
@@ -42,15 +46,10 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-.brand-block p:last-child {
-  color: #475569;
-  line-height: 1.6;
-  margin: 10px 0 24px;
-}
-
 .login-form {
   display: flex;
   flex-direction: column;
+  margin-top: 24px;
 }
 
 label {
