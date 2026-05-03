@@ -41,13 +41,10 @@ body {
 }
 
 .panel {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 18px;
+  max-width: 680px;
 }
 
-.scanner-card,
-.manual-card {
+.scanner-card {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(16, 40, 26, 0.08);
   border-radius: 24px;
@@ -63,14 +60,9 @@ body {
 }
 
 .card-head h2,
-.manual-card h2 {
+.scanner-card h2 {
   margin: 0;
   font-size: 20px;
-}
-
-.manual-card p {
-  color: #4e6558;
-  line-height: 1.55;
 }
 
 .reader {
@@ -109,18 +101,6 @@ body {
   color: #b91c1c;
 }
 
-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #cfe0d5;
-  border-radius: 16px;
-  padding: 14px;
-  resize: vertical;
-  font: inherit;
-  color: #10281a;
-  background: #fbfdfb;
-}
-
 button {
   border: 0;
   border-radius: 999px;
@@ -138,17 +118,7 @@ button:hover {
   transform: translateY(-1px);
 }
 
-button.secondary {
-  margin-top: 14px;
-  width: 100%;
-  background: #234f39;
-}
-
 @media (max-width: 760px) {
-  .panel {
-    grid-template-columns: 1fr;
-  }
-
   .card-head {
     flex-direction: column;
     align-items: stretch;

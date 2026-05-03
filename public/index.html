@@ -30,22 +30,6 @@
         <div id="reader" class="reader" aria-label="QR scanner area"></div>
       </div>
 
-      <div class="manual-card">
-        <h2>Manual Fallback</h2>
-        <p>
-          If camera access is not available, paste the QR verification URL or signed payload below.
-        </p>
-
-        <textarea
-          id="payloadInput"
-          placeholder="Paste a verify URL or payload here"
-          rows="5"
-        ></textarea>
-
-        <button id="manualButton" type="button" class="secondary">
-          Verify Manually
-        </button>
-      </div>
     </section>
   </main>
 
@@ -55,8 +39,6 @@
     const readerElementId = "reader";
     const scannerStatus = document.getElementById("scannerStatus");
     const toggleButton = document.getElementById("toggleButton");
-    const manualButton = document.getElementById("manualButton");
-    const payloadInput = document.getElementById("payloadInput");
 
     let scannerInstance = null;
     let scannerRunning = false;
@@ -85,7 +67,7 @@
       const normalizedPayload = extractPayload(payload);
 
       if (!normalizedPayload) {
-        setStatus("No valid payload was found. Please scan again or paste a valid QR URL.", "error");
+        setStatus("No valid payload was found. Please scan the product QR code again.", "error");
         return;
       }
 
@@ -123,7 +105,7 @@
         toggleButton.textContent = "Stop Scanner";
         setStatus("Camera is active. Point it at the product QR code.", "live");
       } catch (err) {
-        setStatus("Unable to access the camera. Please allow camera permission or use manual verification.", "error");
+        setStatus("Unable to access the camera. Please allow camera permission and try again.", "error");
       }
     }
 
@@ -153,10 +135,6 @@
       }
 
       startScanner();
-    });
-
-    manualButton.addEventListener("click", () => {
-      goToVerification(payloadInput.value);
     });
   </script>
 </body>
