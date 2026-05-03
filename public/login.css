@@ -31,6 +31,13 @@ body {
   text-align: center;
 }
 
+.brand-logo {
+  width: 72px;
+  height: 72px;
+  display: block;
+  margin: 0 auto 16px;
+}
+
 .eyebrow {
   margin: 0 0 10px;
   color: #2563eb;
