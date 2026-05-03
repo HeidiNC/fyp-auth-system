@@ -16,6 +16,7 @@
   <a href="products.html">Product List</a>
   <a class="active" href="analytics.html">View Analytics</a>
   <a href="revocation.html">Revocation History</a>
+  <button class="logout-button" type="button" onclick="logoutAdmin()">Logout</button>
 </div>
 
 <div class="main">
@@ -105,6 +106,7 @@
 
 </div>
 
+<script src="admin-auth.js"></script>
 <script>
   const SCAN_LOGS_PAGE_SIZE = 50;
   let currentScanLogPage = 1;

@@ -75,6 +75,24 @@ body {
   font-weight: 600;
 }
 
+.logout-button {
+  margin-top: auto;
+  width: 100%;
+  padding: 12px 14px;
+  background: #f8fafc;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.logout-button:hover {
+  background: #fef2f2;
+  color: #991b1b;
+  transform: translateY(-1px);
+}
+
 /* Main */
 .main {
   margin-left: 260px;
