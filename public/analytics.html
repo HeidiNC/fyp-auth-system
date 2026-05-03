@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="analytics.css">
+  <script src="api-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>⚡ManufacturerHub</h2>
+  <a href="dashboard.html">Register Product</a>
+  <a href="products.html">Product List</a>
+  <a class="active" href="analytics.html">View Analytics</a>
+  <a href="revocation.html">Revocation History</a>
+</div>
+
+<div class="main">
+
+  <div class="title">
+    <h1>Analytics Dashboard</h1>
+    <p>Monitor product performance and security insights</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <small>Total Products</small>
+      <h2 id="totalProducts">0</h2>
+    </div>
+
+    <div class="card">
+      <small>Total Scans</small>
+      <h2 id="totalScans">0</h2>
+    </div>
+
+    <div class="card">
+      <small>Revoked Items</small>
+      <h2 id="revokedCount">0</h2>
+    </div>
+
+    <div class="card">
+      <small>Active Products</small>
+      <h2 id="activeCount">0</h2>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Scan Activity</h3>
+      <canvas id="scanChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Product Status</h3>
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div class="logs-header">
+      <div>
+        <h3>Recent Scan Logs</h3>
+        <p class="logs-subtitle">View timestamps, locations, and scan activity for registered products.</p>
+      </div>
+      <div class="logs-actions">
+        <div class="logs-count">
+          <span id="scanLogCount">Showing 0 scans</span>
+        </div>
+        <button class="secondary-btn" onclick="loadScanLogs()">Refresh Logs</button>
+      </div>
+    </div>
+
+    <div class="table-shell">
+      <div class="table-wrap">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Product</th>
+              <th>Serial</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Location</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody id="scanLogsTable">
+            <tr>
+              <td colspan="7" class="empty-cell">Loading scan logs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination-bar">
+      <button class="secondary-btn pagination-btn" id="scanPrevBtn" onclick="changeScanLogPage(-1)">Previous</button>
+      <div class="pagination-text" id="scanPaginationText">Page 1 of 1</div>
+      <button class="secondary-btn pagination-btn" id="scanNextBtn" onclick="changeScanLogPage(1)">Next</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SCAN_LOGS_PAGE_SIZE = 50;
+  let currentScanLogPage = 1;
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function parseScanLocation(rawLocation) {
+    if (!rawLocation) {
+      return "Unknown";
+    }
+
+    try {
+      const parsed = JSON.parse(rawLocation);
+      return parsed.label || "Unknown";
+    } catch (err) {
+      return rawLocation;
+    }
+  }
+
+  async function loadAnalytics() {
+    const totalRes = await fetch(apiUrl("/api/product/count"));
+    const totalData = await totalRes.json();
+    document.getElementById("totalProducts").innerText = totalData.total;
+
+    const scanRes = await fetch(apiUrl("/api/scan/count"));
+    const scanData = await scanRes.json();
+    document.getElementById("totalScans").innerText = scanData.total;
+
+    const revokedRes = await fetch(apiUrl("/api/product/revoked/count"));
+    const revokedData = await revokedRes.json();
+    document.getElementById("revokedCount").innerText = revokedData.total;
+
+    const active = totalData.total - revokedData.total;
+    document.getElementById("activeCount").innerText = active;
+  }
+
+  async function loadChart() {
+    const res = await fetch(apiUrl("/api/scan/daily"));
+    const data = await res.json();
+
+    new Chart(document.getElementById("scanChart"), {
+      type: "line",
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [{
+          label: "Scans",
+          data: data.map(d => d.count),
+          borderColor: "#38bdf8",
+          backgroundColor: "rgba(56,189,248,0.2)",
+          fill: true
+        }]
+      }
+    });
+  }
+
+  async function loadStatusChart() {
+    const totalRes = await fetch(apiUrl("/api/product/count"));
+    const totalData = await totalRes.json();
+
+    const revokedRes = await fetch(apiUrl("/api/product/revoked/count"));
+    const revokedData = await revokedRes.json();
+
+    const active = totalData.total - revokedData.total;
+
+    new Chart(document.getElementById("statusChart"), {
+      type: "pie",
+      data: {
+        labels: ["Active", "Revoked"],
+        datasets: [{
+          data: [active, revokedData.total],
+          backgroundColor: ["#22c55e", "#ef4444"]
+        }]
+      }
+    });
+  }
+
+  function updateScanPagination(pagination) {
+    const start = pagination.total === 0
+      ? 0
+      : (pagination.page - 1) * pagination.limit + 1;
+    const end = pagination.total === 0
+      ? 0
+      : Math.min(pagination.page * pagination.limit, pagination.total);
+
+    document.getElementById("scanLogCount").innerText =
+      `Showing ${start}-${end} scans of ${pagination.total}`;
+    document.getElementById("scanPaginationText").innerText =
+      `Page ${pagination.page} of ${pagination.totalPages}`;
+    document.getElementById("scanPrevBtn").disabled = !pagination.hasPrevious;
+    document.getElementById("scanNextBtn").disabled = !pagination.hasNext;
+  }
+
+  function changeScanLogPage(direction) {
+    const nextPage = currentScanLogPage + direction;
+
+    if (nextPage < 1) {
+      return;
+    }
+
+    currentScanLogPage = nextPage;
+    loadScanLogs(currentScanLogPage);
+  }
+
+  async function loadScanLogs(page = 1) {
+    const table = document.getElementById("scanLogsTable");
+    currentScanLogPage = page;
+    document.getElementById("scanLogCount").innerText = "Showing 0 scans";
+    document.getElementById("scanPaginationText").innerText = `Page ${page} of ...`;
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty-cell">Loading scan logs...</td>
+      </tr>
+    `;
+
+    try {
+      const res = await fetch(
+        apiUrl(`/api/scan/logs?limit=${SCAN_LOGS_PAGE_SIZE}&page=${page}`)
+      );
+      const data = await res.json();
+      const logs = data.items || [];
+      const pagination = data.pagination || {
+        page,
+        limit: SCAN_LOGS_PAGE_SIZE,
+        total: logs.length,
+        totalPages: 1,
+        hasPrevious: false,
+        hasNext: false
+      };
+
+      updateScanPagination(pagination);
+
+      if (!Array.isArray(logs) || logs.length === 0) {
+        table.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty-cell">No scan logs available yet.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      table.innerHTML = logs
+        .map(log => {
+          const formattedTime = log.scan_time
+            ? new Date(log.scan_time).toLocaleString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })
+            : "N/A";
+          const displayStatus = log.display_status || (log.product_status === "revoked" ? "Revoked" : "Active");
+          const statusClass =
+            displayStatus === "Revoked"
+              ? "status-revoked"
+              : displayStatus === "Suspicious"
+                ? "risk-medium-pill"
+                : "status-active";
+          const rowClass =
+            displayStatus === "Suspicious"
+              ? "scan-row-suspicious"
+              : displayStatus === "Revoked"
+                ? "scan-row-revoked"
+                : "";
+
+          return `
+            <tr class="${rowClass}">
+              <td>${escapeHtml(formattedTime)}</td>
+              <td>${escapeHtml(log.product_name || "-")}</td>
+              <td>${escapeHtml(log.serial_number || "-")}</td>
+              <td><span class="status-pill ${statusClass}">${escapeHtml(displayStatus)}</span></td>
+              <td>${escapeHtml(log.display_reason || "-")}</td>
+              <td>${escapeHtml(parseScanLocation(log.scan_location))}</td>
+              <td>${escapeHtml(log.ip_address || "-")}</td>
+            </tr>
+          `;
+        })
+        .join("");
+    } catch (err) {
+      document.getElementById("scanPaginationText").innerText = "Unable to load pagination";
+      document.getElementById("scanPrevBtn").disabled = true;
+      document.getElementById("scanNextBtn").disabled = true;
+      table.innerHTML = `
+        <tr>
+          <td colspan="7" class="empty-cell">Unable to load scan logs.</td>
+        </tr>
+      `;
+    }
+  }
+
+  loadAnalytics();
+  loadChart();
+  loadStatusChart();
+  loadScanLogs();
+</script>
+
+</body>
+</html>

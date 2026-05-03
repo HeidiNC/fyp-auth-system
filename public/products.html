@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product List</title>
+  <link rel="stylesheet" href="products.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <h2>⚡ManufacturerHub</h2>
+    <a href="dashboard.html">Register Product</a>
+    <a class="active" href="products.html">Product List</a>
+    <a href="analytics.html">View Analytics</a>
+    <a href="revocation.html">Revocation History</a>
+  </div>
+
+  <div class="main">
+
+    <div class="title">
+      <h1>Products List</h2>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Serial</th>
+          <th>Date Created</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="productTable"></tbody>
+    </table>
+
+  </div>
+
+  <script src="api-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <script>
+  async function loadProducts() {
+    const res = await fetch(apiUrl("/api/product/list"));
+    const products = await res.json();
+
+    const table = document.getElementById("productTable");
+    table.innerHTML = "";
+
+    products.forEach(p => {
+      const qrUrl = p.qr_url || buildVerifyUrl(p.qr_payload);
+
+      QRCode.toDataURL(qrUrl, (err, qrImage) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${p.product_name}</td>
+          <td>${p.serial_number}</td>
+          <td>
+            ${p.created_at 
+              ? new Date(p.created_at).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric"
+                })
+              : "N/A"}
+          </td>
+          <td>
+            <span class="badge ${p.product_status === 'revoked' ? 'revoked' : 'active'}">
+              ${p.product_status === 'revoked' ? 'Revoked' : 'Active'}
+            </span>
+          </td>
+          <td>
+            <button 
+              onclick="downloadQR('${qrImage}', '${p.serial_number}')" 
+              ${p.product_status === 'revoked' ? 'disabled' : ''}
+            >
+              Download
+            </button>
+
+            ${
+              p.product_status === 'revoked'
+                ? ''
+                : `<button onclick="revoke(${p.product_id})">Revoke</button>`
+            }
+          </td>
+        `;
+
+        table.appendChild(row);
+      });
+    });
+  }
+
+  function downloadQR(qrImage, serial) {
+    const link = document.createElement("a");
+    link.href = qrImage;
+    link.download = serial + ".png";
+    link.click();
+  }
+
+  async function revoke(productId) {
+    const reason = prompt("Enter revocation reason:");
+
+    if (!reason) {
+      alert("Reason is required");
+      return;
+    }
+
+    const res = await fetch(apiUrl("/api/product/revoke"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        reason: reason
+      })
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.error || "Revocation failed");
+      return;
+    }
+
+    alert("Product revoked");
+    loadProducts();
+  }
+
+  loadProducts();
+  </script>
+
+</body>
+</html>

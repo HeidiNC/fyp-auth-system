@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify Product</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="verify.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="status">
+      <div class="check" id="icon">⏳</div>
+      <h2 id="statusText">Checking...</h2>
+      <p id="statusSub">Please wait</p>
+    </div>
+
+    <div class="card">
+
+      <div class="product-title">
+        <div class="product-text">
+          <h3><strong>Product Name:</strong> <span id="name">-</span></h3>
+          <span id="model">-</span>
+        </div>
+      </div>
+
+      <div class="info">
+        <p><strong>Serial Number:</strong> <span id="serial">-</span></p>
+      </div>
+
+      <div class="manufacturer">
+        <p><strong>Manufacturer:</strong> <span id="manufacturer">-</span></p>
+        <p><strong>Origin:</strong> <span id="origin">-</span></p>
+      </div>
+
+      <div class="ledger">
+        <strong>Secure Verification</strong><br>
+        <span id="tokenText"></span>
+      </div>
+
+      <div id="warningBox" class="warning-box recommendation-box" style="display:none;">
+        <div class="recommendation-title">⚠ Recommendation</div>
+        <div class="recommendation-text">
+          Contact the manufacturer to verify authenticity. Do not proceed with purchase if source is uncertain.
+        </div>
+      </div>
+
+      <div id="revocationBox" class="warning-box revocation-box" style="display:none;">
+        <div class="revocation-title">⛔ ALERT</div>
+        <div class="revocation-text">
+          This product is not authentic and may be unsafe. Contact the manufacturer for verification.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="api-config.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const payload = params.get("payload");
+    let verificationLabel = "Signed payload validated";
+
+    if (payload) {
+      try {
+        const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const paddedPayload =
+          normalizedPayload + "=".repeat((4 - (normalizedPayload.length % 4)) % 4);
+        const decoded = JSON.parse(atob(paddedPayload));
+        if (decoded.qr_id) {
+          verificationLabel = `Reference: ${decoded.qr_id}`;
+        }
+      } catch (err) {
+        verificationLabel = "Signed payload received";
+      }
+    }
+
+    document.getElementById("tokenText").innerText = verificationLabel;
+
+    fetch(apiUrl("/api/verify"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ payload: payload })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.querySelector(".container");
+      const ledgerBox = document.querySelector(".ledger");
+
+      document.getElementById("statusSub").innerText = data.message || "";
+
+      if (data.status === "Authentic") {
+        document.getElementById("icon").innerText = "✔";
+        document.getElementById("statusText").innerText = "Authentic Product";
+        document.getElementById("model").innerText = "Verified Product";
+        document.getElementById("manufacturer").innerText = "Trusted Brand";
+        document.getElementById("origin").innerText = "Verified Source";
+        ledgerBox.style.display = "block";
+        container.classList.add("success");
+      } else if (data.status === "Suspicious") {
+        document.getElementById("icon").innerText = "⚠";
+        document.getElementById("statusText").innerText = "Suspicious Product";
+        document.getElementById("model").innerText = "Verification Warning";
+        document.getElementById("manufacturer").innerText = "Trusted Brand";
+        document.getElementById("origin").innerText = "Verification Required";
+        document.getElementById("warningBox").style.display = "block";
+        ledgerBox.style.display = "block";
+        container.classList.add("warning");
+      } else if (data.status === "Revoked") {
+        document.getElementById("icon").innerText = "✖";
+        document.getElementById("statusText").innerText = "Revoked Product";
+        document.getElementById("statusSub").innerText =
+          "This product has been revoked";
+        document.getElementById("model").innerText = "-";
+        document.getElementById("manufacturer").innerText = "-";
+        document.getElementById("origin").innerText = "-";
+        document.getElementById("revocationBox").style.display = "block";
+        ledgerBox.style.display = "none";
+        container.classList.add("error");
+      } else {
+        document.getElementById("icon").innerText = "✖";
+        document.getElementById("statusText").innerText = "Invalid Product";
+        document.getElementById("statusSub").innerText =
+          "QR code not recognized";
+        document.getElementById("model").innerText = "-";
+        document.getElementById("manufacturer").innerText = "-";
+        document.getElementById("origin").innerText = "-";
+        document.getElementById("tokenText").innerText = "-";
+        ledgerBox.style.display = "none";
+        container.classList.add("error");
+      }
+
+      document.getElementById("name").innerText = data.product || "-";
+      document.getElementById("serial").innerText = data.serial || "-";
+    })
+    .catch(() => {
+      const container = document.querySelector(".container");
+      const ledgerBox = document.querySelector(".ledger");
+
+      document.getElementById("icon").innerText = "⚠";
+      document.getElementById("statusText").innerText = "Error";
+      document.getElementById("statusSub").innerText =
+        "Unable to verify product";
+      document.getElementById("model").innerText = "-";
+      document.getElementById("manufacturer").innerText = "-";
+      document.getElementById("origin").innerText = "-";
+      document.getElementById("tokenText").innerText = "-";
+      ledgerBox.style.display = "none";
+
+      container.classList.add("error");
+    });
+  </script>
+
+</body>
+</html>

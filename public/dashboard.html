@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ManufacturerHub</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <h2>⚡ManufacturerHub</h2>
+    <a class="active" href="dashboard.html">Register Product</a>
+    <a href="products.html">Product List</a>
+    <a href="analytics.html">View Analytics</a>
+    <a href="revocation.html">Revocation History</a>
+  </div>
+
+  <div class="main">
+
+    <div class="title">
+      <h1>Product Dashboard</h1>
+      <p>Manage and track your product inventory</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="cards">
+      <div class="card">
+        <small>Total Products</small>
+        <h2 id="totalProducts">0</h2>
+      </div>
+
+      <div class="card">
+        <small>Active Scans</small>
+        <h2 id="totalScans">0</h2>
+      </div>
+
+      <div class="card">
+        <small>Revoked Items</small>
+        <h2 id="revokedCount">0</h2>
+      </div>
+    </div>
+ 
+
+    <!-- Register -->
+    <div class="container">
+
+      <div class="form-box">
+        <h3>Register New Product</h3>
+
+        <input type="text" id="name" placeholder="Enter product name">
+        <input type="text" id="serial" placeholder="Enter serial number">
+
+        <button onclick="register()">REGISTER</button>
+
+        <p id="result"></p>
+      </div>
+
+      <div class="qr-box" id="qrBox">
+        QR code will appear here
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="api-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <script>
+    let currentQR = "";
+    let currentSerial = "";
+
+    async function register() {
+      const name = document.getElementById("name").value.trim();
+      const serial = document.getElementById("serial").value.trim();
+
+      // ❌ STOP if empty
+      if (!name || !serial) {
+        alert("Please fill in both product name and serial number");
+        return;
+      }
+
+      currentSerial = serial;
+
+      const res = await fetch(apiUrl("/api/product/register"), {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          name,
+          serial_number: serial,
+          manufacturer_id: 1
+        })
+      });
+
+      if (!res.ok) {
+        alert("Failed to register product");
+        return;
+      }
+
+      const data = await res.json();
+
+      document.getElementById("result").innerText =
+        "QR ID: " + data.qr_value;
+
+      const qrTargetUrl = data.qr_url || buildVerifyUrl(data.qr_payload);
+
+      QRCode.toDataURL(qrTargetUrl, function (err, qrImage) {
+        currentQR = qrImage;
+
+        document.getElementById("qrBox").innerHTML = `
+          <img src="${qrImage}" width="200">
+          <button onclick="downloadQR()">Download</button>
+        `;
+      });
+
+      document.getElementById("name").value = "";
+      document.getElementById("serial").value = "";
+
+      loadTotalProducts();  
+    }
+
+    async function loadTotalProducts() {
+      const res = await fetch(apiUrl("/api/product/count"));
+      const data = await res.json();
+      document.getElementById("totalProducts").innerText = data.total;
+    }
+
+    async function loadTotalScans() {
+      const res = await fetch(apiUrl("/api/scan/count"));
+      const data = await res.json();
+
+      document.getElementById("totalScans").innerText = data.total;
+    }
+
+    async function loadRevokedCount() {
+      const res = await fetch(apiUrl("/api/product/revoked/count"));
+      const data = await res.json();
+      document.getElementById("revokedCount").innerText = data.total;
+    }
+
+    function downloadQR() {
+      const link = document.createElement("a");
+      link.href = currentQR;
+      link.download = `${currentSerial}.png`;
+      link.click();
+    }
+
+    loadTotalProducts();
+    loadTotalScans();
+    loadRevokedCount();
+  </script>
+
+</body>
+</html>

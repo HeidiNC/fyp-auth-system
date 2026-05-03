@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1180" viewBox="0 0 1400 1180">
+  <defs>
+    <style>
+      .title { font: 700 28px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 14px 'Segoe UI', Arial, sans-serif; fill: #475569; }
+      .label { font: 600 16px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .small { font: 400 13px 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .arrow { stroke: #64748b; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .flow { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .decision { fill: #fff7ed; stroke: #fdba74; stroke-width: 2; }
+      .good { fill: #dcfce7; stroke: #4ade80; stroke-width: 2; }
+      .warn { fill: #fffbeb; stroke: #f59e0b; stroke-width: 2; }
+      .bad { fill: #fee2e2; stroke: #f87171; stroke-width: 2; }
+      .accent { fill: #dbeafe; stroke: #60a5fa; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect width="1400" height="1180" fill="#f8fafc"/>
+  <text x="700" y="50" text-anchor="middle" class="title">Overall System Workflow of the Product Authentication System</text>
+  <text x="700" y="78" text-anchor="middle" class="subtitle">Registration, verification, clone-risk detection, revocation, and ledger recording flow</text>
+
+  <!-- Left lane -->
+  <rect x="80" y="120" width="560" height="980" rx="20" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="360" y="155" text-anchor="middle" class="label">Manufacturer Registration and Revocation Workflow</text>
+
+  <rect x="170" y="190" width="380" height="70" rx="14" class="flow"/>
+  <text x="360" y="220" text-anchor="middle" class="label">Manufacturer Registers Product</text>
+  <text x="360" y="243" text-anchor="middle" class="small">Inputs product name and serial number</text>
+
+  <rect x="170" y="320" width="380" height="78" rx="14" class="accent"/>
+  <text x="360" y="350" text-anchor="middle" class="label">Backend Stores Product Record</text>
+  <text x="360" y="373" text-anchor="middle" class="small">Insert into Product table and generate QR identifier</text>
+
+  <rect x="170" y="460" width="380" height="78" rx="14" class="accent"/>
+  <text x="360" y="490" text-anchor="middle" class="label">Generate Signed QR Payload</text>
+  <text x="360" y="513" text-anchor="middle" class="small">Create HMAC-protected verification URL and QR image</text>
+
+  <rect x="170" y="600" width="380" height="78" rx="14" class="good"/>
+  <text x="360" y="630" text-anchor="middle" class="label">Return QR Code to Dashboard</text>
+  <text x="360" y="653" text-anchor="middle" class="small">Manufacturer downloads QR code for product labelling</text>
+
+  <rect x="170" y="740" width="380" height="78" rx="14" class="accent"/>
+  <text x="360" y="770" text-anchor="middle" class="label">Append REGISTER Ledger Block</text>
+  <text x="360" y="793" text-anchor="middle" class="small">Store hash-linked record in Ledger_Block table</text>
+
+  <rect x="170" y="900" width="380" height="78" rx="14" class="flow"/>
+  <text x="360" y="930" text-anchor="middle" class="label">Manufacturer Revokes Product</text>
+  <text x="360" y="953" text-anchor="middle" class="small">Trigger revocation from Product List page</text>
+
+  <rect x="170" y="1010" width="380" height="70" rx="14" class="bad"/>
+  <text x="360" y="1040" text-anchor="middle" class="label">Update Status, Disable QR, Record REVOKE Block</text>
+  <text x="360" y="1063" text-anchor="middle" class="small">Future scans must return Revoked</text>
+
+  <!-- Right lane -->
+  <rect x="760" y="120" width="560" height="980" rx="20" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="1040" y="155" text-anchor="middle" class="label">Consumer Verification Workflow</text>
+
+  <rect x="850" y="190" width="380" height="70" rx="14" class="flow"/>
+  <text x="1040" y="220" text-anchor="middle" class="label">Consumer Scans QR Code</text>
+  <text x="1040" y="243" text-anchor="middle" class="small">Verification page sends signed payload to backend</text>
+
+  <rect x="850" y="320" width="380" height="78" rx="14" class="accent"/>
+  <text x="1040" y="350" text-anchor="middle" class="label">Validate Signed Payload</text>
+  <text x="1040" y="373" text-anchor="middle" class="small">Reject malformed or tampered payload before DB lookup</text>
+
+  <polygon points="1040,450 1180,520 1040,590 900,520" class="decision"/>
+  <text x="1040" y="515" text-anchor="middle" class="label">Payload Valid?</text>
+  <text x="1040" y="538" text-anchor="middle" class="small">HMAC signature check</text>
+
+  <rect x="850" y="650" width="380" height="78" rx="14" class="accent"/>
+  <text x="1040" y="680" text-anchor="middle" class="label">Retrieve Product and QR Record</text>
+  <text x="1040" y="703" text-anchor="middle" class="small">Lookup qr_code and product tables</text>
+
+  <rect x="850" y="790" width="380" height="78" rx="14" class="accent"/>
+  <text x="1040" y="820" text-anchor="middle" class="label">Log Scan and Evaluate Clone Risk</text>
+  <text x="1040" y="843" text-anchor="middle" class="small">Store scan metadata and classify Low / Medium / High risk</text>
+
+  <polygon points="1040,920 1180,990 1040,1060 900,990" class="decision"/>
+  <text x="1040" y="985" text-anchor="middle" class="label">Check Product Status</text>
+  <text x="1040" y="1008" text-anchor="middle" class="small">Authentic, Suspicious, Revoked, or Invalid</text>
+
+  <!-- Result boxes -->
+  <rect x="1080" y="440" width="220" height="78" rx="14" class="bad"/>
+  <text x="1190" y="470" text-anchor="middle" class="label">Invalid Result</text>
+  <text x="1190" y="493" text-anchor="middle" class="small">Payload invalid or unknown</text>
+
+  <rect x="1080" y="1085" width="220" height="68" rx="14" class="good"/>
+  <text x="1190" y="1113" text-anchor="middle" class="label">Authentic</text>
+  <text x="1190" y="1136" text-anchor="middle" class="small">Verified product</text>
+
+  <rect x="840" y="1085" width="220" height="68" rx="14" class="warn"/>
+  <text x="950" y="1113" text-anchor="middle" class="label">Suspicious</text>
+  <text x="950" y="1136" text-anchor="middle" class="small">Show recommendation warning</text>
+
+  <rect x="600" y="1085" width="220" height="68" rx="14" class="bad"/>
+  <text x="710" y="1113" text-anchor="middle" class="label">Revoked</text>
+  <text x="710" y="1136" text-anchor="middle" class="small">Show alert</text>
+
+  <!-- Cross-lane arrows -->
+  <path d="M 550 638 C 670 638, 740 225, 850 225" class="arrow"/>
+  <path d="M 550 1045 C 680 1045, 760 990, 900 990" class="arrow"/>
+
+  <!-- Vertical arrows left -->
+  <line x1="360" y1="260" x2="360" y2="320" class="arrow"/>
+  <line x1="360" y1="398" x2="360" y2="460" class="arrow"/>
+  <line x1="360" y1="538" x2="360" y2="600" class="arrow"/>
+  <line x1="360" y1="678" x2="360" y2="740" class="arrow"/>
+  <line x1="360" y1="818" x2="360" y2="900" class="arrow"/>
+  <line x1="360" y1="978" x2="360" y2="1010" class="arrow"/>
+
+  <!-- Vertical arrows right -->
+  <line x1="1040" y1="260" x2="1040" y2="320" class="arrow"/>
+  <line x1="1040" y1="398" x2="1040" y2="450" class="arrow"/>
+  <line x1="1040" y1="590" x2="1040" y2="650" class="arrow"/>
+  <line x1="1040" y1="728" x2="1040" y2="790" class="arrow"/>
+  <line x1="1040" y1="868" x2="1040" y2="920" class="arrow"/>
+
+  <!-- Decision arrows -->
+  <path d="M 1180 520 L 1080 520" class="arrow"/>
+  <text x="1110" y="505" class="small">No</text>
+
+  <path d="M 1040 590 L 1040 650" class="arrow"/>
+  <text x="1053" y="624" class="small">Yes</text>
+
+  <path d="M 1180 990 C 1220 990, 1230 1020, 1190 1085" class="arrow"/>
+  <text x="1235" y="1012" class="small">Authentic</text>
+
+  <path d="M 1040 1060 L 950 1085" class="arrow"/>
+  <text x="965" y="1048" class="small">Suspicious</text>
+
+  <path d="M 900 990 C 820 990, 770 1025, 710 1085" class="arrow"/>
+  <text x="790" y="1012" class="small">Revoked</text>
+</svg>
