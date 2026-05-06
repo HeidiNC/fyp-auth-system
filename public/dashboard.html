@@ -9,7 +9,7 @@
 <body>
 
   <div class="sidebar">
-    <img src="logo.png" alt="ManufacturerHub logo"></img>
+    <img src="logo.png" alt="ManufacturerHub logo">
     <a class="active" href="dashboard.html">Register Product</a>
     <a href="products.html">Product List</a>
     <a href="analytics.html">View Analytics</a>
@@ -24,7 +24,6 @@
       <p>Manage and track your product inventory</p>
     </div>
 
-    <!-- Stats -->
     <div class="cards">
       <div class="card">
         <small>Total Products</small>
@@ -41,9 +40,7 @@
         <h2 id="revokedCount">0</h2>
       </div>
     </div>
- 
 
-    <!-- Register -->
     <div class="container">
 
       <div class="form-box">
@@ -52,17 +49,49 @@
         <input type="text" id="name" placeholder="Enter product name">
         <input type="text" id="serial" placeholder="Enter serial number">
 
-        <button onclick="register()">REGISTER</button>
+        <button id="registerBtn" onclick="register()">REGISTER</button>
 
-        <p id="result"></p>
+        <p id="result" class="form-message" aria-live="polite"></p>
       </div>
 
       <div class="qr-box" id="qrBox">
-        QR code will appear here
+        <div class="qr-placeholder">
+          <strong>QR code will appear here</strong>
+          <span>Register a product to generate a signed verification QR.</span>
+        </div>
       </div>
 
     </div>
 
+  </div>
+
+  <div id="successModal" class="modal-backdrop" hidden>
+    <div class="success-modal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <div class="modal-status">Success</div>
+      <h2 id="successTitle">Product Registered</h2>
+      <p>The product record and signed verification QR code were created successfully.</p>
+
+      <div class="modal-product">
+        <div>
+          <span>Product</span>
+          <strong id="modalProductName">-</strong>
+        </div>
+        <div>
+          <span>Serial Number</span>
+          <strong id="modalSerial">-</strong>
+        </div>
+        <div>
+          <span>QR ID</span>
+          <strong id="modalQrId">-</strong>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" onclick="downloadQR()">Download QR</button>
+        <button type="button" class="secondary-button" onclick="copyVerifyLink()">Copy Link</button>
+        <button type="button" class="ghost-button" onclick="closeSuccessModal()">Close</button>
+      </div>
+    </div>
   </div>
 
   <script src="api-config.js"></script>
@@ -72,54 +101,89 @@
   <script>
     let currentQR = "";
     let currentSerial = "";
+    let currentVerifyUrl = "";
 
     async function register() {
       const name = document.getElementById("name").value.trim();
       const serial = document.getElementById("serial").value.trim();
+      const registerBtn = document.getElementById("registerBtn");
+      const qrBox = document.getElementById("qrBox");
 
-      // ❌ STOP if empty
       if (!name || !serial) {
-        alert("Please fill in both product name and serial number");
+        showMessage("Please fill in both product name and serial number.", "error");
         return;
       }
 
       currentSerial = serial;
+      registerBtn.disabled = true;
+      registerBtn.innerText = "REGISTERING...";
+      showMessage("Creating product record and signed QR...", "info");
+      qrBox.classList.remove("success");
 
-      const res = await fetch(apiUrl("/api/product/register"), {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          name,
-          serial_number: serial,
-          manufacturer_id: 1
-        })
-      });
+      try {
+        const res = await fetch(apiUrl("/api/product/register"), {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            name,
+            serial_number: serial,
+            manufacturer_id: 1
+          })
+        });
 
-      if (!res.ok) {
-        alert("Failed to register product");
-        return;
+        const data = await res.json();
+
+        if (!res.ok) {
+          showMessage(data.error || "Failed to register product.", "error");
+          return;
+        }
+
+        const qrTargetUrl = data.qr_url || buildVerifyUrl(data.qr_payload);
+        currentVerifyUrl = qrTargetUrl;
+
+        QRCode.toDataURL(qrTargetUrl, function (err, qrImage) {
+          if (err) {
+            showMessage("Product registered, but QR preview could not be generated.", "error");
+            return;
+          }
+
+          currentQR = qrImage;
+          showMessage("Product registered successfully.", "success");
+          showSuccessModal(name, serial, data.qr_value);
+
+          qrBox.classList.add("success");
+          qrBox.innerHTML = `
+            <div class="success-badge">Registered</div>
+            <img src="${qrImage}" alt="Verification QR code for ${escapeHtml(name)}">
+            <div class="registered-details">
+              <strong>${escapeHtml(name)}</strong>
+              <span>Serial: ${escapeHtml(serial)}</span>
+              <small>QR ID: ${escapeHtml(data.qr_value)}</small>
+            </div>
+            <div class="qr-actions">
+              <button type="button" onclick="downloadQR()">Download QR</button>
+              <button type="button" class="secondary-action" onclick="copyVerifyLink()">Copy Link</button>
+            </div>
+            <a class="text-link" href="products.html">View in product list</a>
+          `;
+        });
+
+        document.getElementById("name").value = "";
+        document.getElementById("serial").value = "";
+
+        loadTotalProducts();
+      } catch (err) {
+        showMessage("Unable to connect to the server. Please try again.", "error");
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.innerText = "REGISTER";
       }
+    }
 
-      const data = await res.json();
-
-      document.getElementById("result").innerText =
-        "QR ID: " + data.qr_value;
-
-      const qrTargetUrl = data.qr_url || buildVerifyUrl(data.qr_payload);
-
-      QRCode.toDataURL(qrTargetUrl, function (err, qrImage) {
-        currentQR = qrImage;
-
-        document.getElementById("qrBox").innerHTML = `
-          <img src="${qrImage}" width="200">
-          <button onclick="downloadQR()">Download</button>
-        `;
-      });
-
-      document.getElementById("name").value = "";
-      document.getElementById("serial").value = "";
-
-      loadTotalProducts();  
+    function showMessage(message, type) {
+      const result = document.getElementById("result");
+      result.innerText = message;
+      result.className = `form-message ${type}`;
     }
 
     async function loadTotalProducts() {
@@ -146,6 +210,35 @@
       link.href = currentQR;
       link.download = `${currentSerial}.png`;
       link.click();
+    }
+
+    async function copyVerifyLink() {
+      try {
+        await navigator.clipboard.writeText(currentVerifyUrl);
+        showMessage("Verification link copied.", "success");
+      } catch (err) {
+        showMessage("Unable to copy link from this browser.", "error");
+      }
+    }
+
+    function showSuccessModal(name, serial, qrId) {
+      document.getElementById("modalProductName").innerText = name;
+      document.getElementById("modalSerial").innerText = serial;
+      document.getElementById("modalQrId").innerText = qrId;
+      document.getElementById("successModal").hidden = false;
+    }
+
+    function closeSuccessModal() {
+      document.getElementById("successModal").hidden = true;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     loadTotalProducts();

@@ -23,10 +23,12 @@ body {
   flex-direction: column;
 }
 
+.sidebar img,
 .sidebar h2 img {
   width: 200px;
-  height: 200px;
+  height: auto;
   flex: 0 0 auto;
+  margin-bottom: 18px;
 }
 
 .sidebar a {
@@ -180,6 +182,31 @@ button:hover {
   transform: translateY(-1px);
 }
 
+button:disabled {
+  background: #94a3b8;
+  cursor: wait;
+  transform: none;
+}
+
+.form-message {
+  min-height: 22px;
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-message.info {
+  color: #1d4ed8;
+}
+
+.form-message.success {
+  color: #15803d;
+}
+
+.form-message.error {
+  color: #b91c1c;
+}
+
 .qr-box {
   display: flex;
   justify-content: center;
@@ -189,8 +216,7 @@ button:hover {
 }
 
 .qr-box {
-  width: 220px;
-  height: 260px;
+  min-height: 360px;
   background: #f8fafc;
   border: 1px dashed #cbd5e1;
   border-radius: 10px;
@@ -199,10 +225,82 @@ button:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.qr-box.success {
+  background: #ffffff;
+  border-style: solid;
+  border-color: #bbf7d0;
+  box-shadow: 0 10px 28px rgba(22, 163, 74, 0.08);
+}
+
+.qr-placeholder {
+  max-width: 260px;
+  display: grid;
+  gap: 8px;
+}
+
+.qr-placeholder strong {
+  color: #334155;
+}
+
+.qr-placeholder span {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.success-badge {
+  padding: 5px 10px;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.qr-box img {
+  width: 190px;
+  height: 190px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.registered-details {
+  max-width: 320px;
+  display: grid;
+  gap: 4px;
+}
+
+.registered-details strong {
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.registered-details span,
+.registered-details small {
+  color: #475569;
+}
+
+.registered-details small {
+  overflow-wrap: anywhere;
+}
+
+.qr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 .qr-box button {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 6px;
   background: #1d4ed8;
@@ -213,6 +311,143 @@ button:hover {
   box-shadow: none;
 }
 
+.qr-box button.secondary-action {
+  background: #f8fafc;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.text-link {
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.success-modal {
+  width: min(440px, 100%);
+  background: #ffffff;
+  border: 1px solid #dcfce7;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  padding: 24px;
+  text-align: center;
+}
+
+.modal-status {
+  width: fit-content;
+  margin: 0 auto 12px;
+  padding: 6px 12px;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.success-modal h2 {
+  margin: 0;
+  color: #166534;
+}
+
+.success-modal p {
+  margin: 10px 0 18px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.modal-product {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.modal-product div {
+  display: grid;
+  gap: 3px;
+}
+
+.modal-product span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.modal-product strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-actions button {
+  margin-top: 0;
+}
+
+.modal-actions .ghost-button {
+  grid-column: 1 / -1;
+  background: transparent;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+}
+
+.secondary-button {
+  background: #f8fafc;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  box-shadow: none;
+}
+
 .list-section {
   margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .cards,
+  .container {
+    flex-direction: column;
+  }
 }
