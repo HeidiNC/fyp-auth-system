@@ -73,18 +73,27 @@
   line-height: 1;
 }
 
-.stat-icon.package-icon,
+.stat-icon.x-icon,
 .stat-icon.check-icon {
   position: absolute;
 }
 
-.package-icon::before {
+.x-icon::before,
+.x-icon::after {
   content: "";
-  width: 18px;
-  height: 16px;
-  border: 3px solid #1d4ed8;
-  border-top-width: 6px;
-  border-radius: 3px;
+  position: absolute;
+  width: 22px;
+  height: 4px;
+  background: #1d4ed8;
+  border-radius: 999px;
+}
+
+.x-icon::before {
+  transform: rotate(45deg);
+}
+
+.x-icon::after {
+  transform: rotate(-45deg);
 }
 
 .check-icon::before {
@@ -97,7 +106,7 @@
   margin-top: -4px;
 }
 
-.package-icon {
+.x-icon {
   background: #eff6ff;
   border-color: #bfdbfe;
 }
