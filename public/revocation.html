@@ -26,21 +26,36 @@
 
     <div class="cards">
       <div class="card stat-card">
-        <div class="stat-label">Total Revocations</div>
-        <h2 id="totalRevoked">0</h2>
-        <div class="stat-foot">All recorded revoked products</div>
+        <div class="stat-head">
+          <div class="stat-icon">!</div>
+          <div>
+            <div class="stat-label">Total Revocations</div>
+            <h2 id="totalRevoked">0</h2>
+            <div class="stat-foot">All recorded revoked products</div>
+          </div>
+        </div>
       </div>
 
       <div class="card stat-card">
-        <div class="stat-label">Units Affected</div>
-        <h2 id="unitsAffected">0</h2>
-        <div class="stat-foot">Products removed from active circulation</div>
+        <div class="stat-head">
+          <div class="stat-icon package-icon"></div>
+          <div>
+            <div class="stat-label">Units Affected</div>
+            <h2 id="unitsAffected">0</h2>
+            <div class="stat-foot">Products removed from active circulation</div>
+          </div>
+        </div>
       </div>
 
       <div class="card stat-card">
-        <div class="stat-label">Completed Cases</div>
-        <h2 id="completed">0</h2>
-        <div class="stat-foot">Revocations successfully processed</div>
+        <div class="stat-head">
+          <div class="stat-icon check-icon"></div>
+          <div>
+            <div class="stat-label">Completed Cases</div>
+            <h2 id="completed">0</h2>
+            <div class="stat-foot">Revocations successfully processed</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -131,6 +146,7 @@
         .map(item => `
           <article class="revocation-card">
             <div class="revocation-top">
+              <div class="record-icon">!</div>
               <div>
                 <h3>${escapeHtml(item.product_name || "Unknown Product")}</h3>
                 <div class="meta-line">
