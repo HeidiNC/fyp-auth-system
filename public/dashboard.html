@@ -277,6 +277,11 @@
       `;
     }
 
+    function toTimestamp(value) {
+      const timestamp = new Date(value).getTime();
+      return Number.isFinite(timestamp) ? timestamp : 0;
+    }
+
     async function loadRecentActivity() {
       const activityList = document.getElementById("recentActivityList");
       activityList.innerHTML = `<div class="activity-empty">Loading recent activity...</div>`;
@@ -299,6 +304,7 @@
             title: "Product registered",
             subtitle: `${product.product_name || "Unknown product"} - ${product.serial_number || "-"}`,
             date: product.created_at,
+            timestamp: toTimestamp(product.created_at),
             time: formatRelativeTime(product.created_at),
             tone: "registered"
           });
@@ -309,6 +315,7 @@
             title: "QR code scanned",
             subtitle: `${scan.product_name || "Unknown product"} - ${scan.serial_number || "-"}`,
             date: scan.scan_time,
+            timestamp: toTimestamp(scan.scan_time),
             time: formatRelativeTime(scan.scan_time),
             tone: "scan"
           });
@@ -319,12 +326,13 @@
             title: "Item revoked",
             subtitle: `${item.product_name || "Unknown product"} - ${item.serial_number || "-"}${item.revoke_reason ? ` (${item.revoke_reason})` : ""}`,
             date: item.updated_at,
+            timestamp: toTimestamp(item.updated_at),
             time: formatRelativeTime(item.updated_at),
             tone: "revoked"
           });
         });
 
-        activities.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+        activities.sort((a, b) => b.timestamp - a.timestamp);
 
         if (activities.length === 0) {
           activityList.innerHTML = `<div class="activity-empty">No activity recorded yet.</div>`;
