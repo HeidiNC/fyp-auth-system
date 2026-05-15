@@ -435,19 +435,15 @@ button:disabled {
 }
 
 .dashboard-lower {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
-  gap: 20px;
   margin-top: 34px;
 }
 
-.activity-panel,
-.status-panel {
+.activity-panel {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  padding: 20px;
+  padding: 22px;
 }
 
 .section-head {
@@ -480,9 +476,9 @@ button:disabled {
 }
 
 .activity-list,
-.status-list {
+.activity-list {
   display: grid;
-  gap: 16px;
+  gap: 0;
 }
 
 .activity-item {
@@ -558,40 +554,6 @@ button:disabled {
   color: #b91c1c;
 }
 
-.status-row {
-  display: grid;
-  grid-template-columns: 10px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-}
-
-.status-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #cbd5e1;
-}
-
-.status-dot.online {
-  background: #22c55e;
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
-}
-
-.status-dot.offline {
-  background: #ef4444;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
-}
-
-.status-row span:nth-child(2) {
-  color: #0f172a;
-  font-weight: 600;
-}
-
-.status-row strong {
-  color: #64748b;
-  font-size: 13px;
-}
-
 @media (max-width: 900px) {
   .main {
     margin-left: 0;
@@ -605,9 +567,7 @@ button:disabled {
   }
 
   .cards,
-  .container,
-  .dashboard-lower {
+  .container {
     flex-direction: column;
-    display: flex;
   }
 }

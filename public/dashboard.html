@@ -74,30 +74,6 @@
           <div class="activity-empty">Loading recent activity...</div>
         </div>
       </section>
-
-      <section class="status-panel">
-        <div class="section-head">
-          <h3>System Status</h3>
-        </div>
-
-        <div class="status-list">
-          <div class="status-row">
-            <span class="status-dot" id="databaseDot"></span>
-            <span>Database</span>
-            <strong id="databaseStatus">Checking</strong>
-          </div>
-          <div class="status-row">
-            <span class="status-dot" id="apiDot"></span>
-            <span>API Services</span>
-            <strong id="apiStatus">Checking</strong>
-          </div>
-          <div class="status-row">
-            <span class="status-dot" id="qrDot"></span>
-            <span>QR Generator</span>
-            <strong id="qrStatus">Ready</strong>
-          </div>
-        </div>
-      </section>
     </div>
 
   </div>
@@ -210,7 +186,6 @@
 
         loadTotalProducts();
         loadRecentActivity();
-        loadSystemStatus();
       } catch (err) {
         showMessage("Unable to connect to the server. Please try again.", "error");
       } finally {
@@ -362,27 +337,6 @@
       }
     }
 
-    async function loadSystemStatus() {
-      const statusChecks = await Promise.allSettled([
-        fetch(apiUrl("/api/product/count")),
-        fetch(apiUrl("/health"))
-      ]);
-
-      const databaseOk =
-        statusChecks[0].status === "fulfilled" && statusChecks[0].value.ok;
-      const apiOk =
-        statusChecks[1].status === "fulfilled" && statusChecks[1].value.ok;
-
-      updateStatus("database", databaseOk);
-      updateStatus("api", apiOk);
-      updateStatus("qr", typeof QRCode !== "undefined");
-    }
-
-    function updateStatus(key, isOk) {
-      document.getElementById(`${key}Status`).innerText = isOk ? "Operational" : "Unavailable";
-      document.getElementById(`${key}Dot`).className = `status-dot ${isOk ? "online" : "offline"}`;
-    }
-
     function escapeHtml(value) {
       return String(value)
         .replace(/&/g, "&amp;")
@@ -396,7 +350,6 @@
     loadTotalScans();
     loadRevokedCount();
     loadRecentActivity();
-    loadSystemStatus();
   </script>
 
 </body>
