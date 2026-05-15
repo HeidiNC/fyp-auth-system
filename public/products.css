@@ -151,3 +151,144 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.44);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.revoke-modal {
+  width: min(480px, 100%);
+  background: #ffffff;
+  border: 1px solid #fecaca;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  padding: 26px;
+}
+
+.modal-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.revoke-modal h2 {
+  margin: 16px 0 8px;
+}
+
+.modal-copy {
+  margin: 0 0 18px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.selected-product {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.selected-product span,
+.revoke-modal label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.selected-product strong {
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.selected-product small {
+  color: #475569;
+}
+
+.revoke-modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  resize: vertical;
+  font: inherit;
+  color: #0f172a;
+}
+
+.revoke-modal textarea:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.modal-message {
+  min-height: 20px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.modal-message.error {
+  color: #b91c1c;
+}
+
+.modal-message.success {
+  color: #15803d;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.modal-actions button {
+  width: 100%;
+  margin-top: 0;
+  padding: 12px;
+}
+
+.cancel-button {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.cancel-button:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.danger-button {
+  background: #dc2626;
+}
+
+.danger-button:hover {
+  background: #b91c1c;
+}

@@ -2,8 +2,8 @@
 <html>
 <head>
   <title>Product List</title>
-  <link rel="stylesheet" href="products.css">
   <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="products.css">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
   <div class="main">
 
     <div class="title">
-      <h1>Products List</h2>
+      <h1>Products List</h1>
     </div>
 
     <table>
@@ -39,11 +39,42 @@
 
   </div>
 
+  <div id="revokeModal" class="modal-backdrop" hidden>
+    <div class="revoke-modal" role="dialog" aria-modal="true" aria-labelledby="revokeTitle">
+      <div class="modal-icon">!</div>
+      <h2 id="revokeTitle">Revoke Product</h2>
+      <p class="modal-copy">
+        Provide a clear reason for revocation. This reason will appear in the revocation history.
+      </p>
+
+      <div class="selected-product">
+        <span>Selected Product</span>
+        <strong id="revokeProductName">-</strong>
+        <small id="revokeProductSerial">-</small>
+      </div>
+
+      <label for="revokeReason">Revocation Reason</label>
+      <textarea
+        id="revokeReason"
+        rows="4"
+        placeholder="Example: Product reported as counterfeit, unsafe, expired, or recalled"
+      ></textarea>
+      <p id="revokeMessage" class="modal-message" aria-live="polite"></p>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-button" onclick="closeRevokeModal()">Cancel</button>
+        <button id="confirmRevokeBtn" type="button" class="danger-button" onclick="submitRevocation()">Confirm Revocation</button>
+      </div>
+    </div>
+  </div>
+
   <script src="api-config.js"></script>
   <script src="admin-auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
   <script>
+  let selectedProductForRevocation = null;
+
   async function loadProducts() {
     const res = await fetch(apiUrl("/api/product/list"));
     const products = await res.json();
@@ -58,8 +89,8 @@
         const row = document.createElement("tr");
 
         row.innerHTML = `
-          <td>${p.product_name}</td>
-          <td>${p.serial_number}</td>
+          <td>${escapeHtml(p.product_name)}</td>
+          <td>${escapeHtml(p.serial_number)}</td>
           <td>
             ${p.created_at 
               ? new Date(p.created_at).toLocaleDateString("en-GB", {
@@ -75,8 +106,8 @@
             </span>
           </td>
           <td>
-            <button 
-              onclick="downloadQR('${qrImage}', '${p.serial_number}')" 
+            <button
+              data-download
               ${p.product_status === 'revoked' ? 'disabled' : ''}
             >
               Download
@@ -85,10 +116,22 @@
             ${
               p.product_status === 'revoked'
                 ? ''
-                : `<button onclick="revoke(${p.product_id})">Revoke</button>`
+                : `<button data-revoke>Revoke</button>`
             }
           </td>
         `;
+
+        const downloadButton = row.querySelector("[data-download]");
+        downloadButton.addEventListener("click", () => {
+          downloadQR(qrImage, p.serial_number);
+        });
+
+        const revokeButton = row.querySelector("[data-revoke]");
+        if (revokeButton) {
+          revokeButton.addEventListener("click", () => {
+            openRevokeModal(p);
+          });
+        }
 
         table.appendChild(row);
       });
@@ -102,33 +145,84 @@
     link.click();
   }
 
-  async function revoke(productId) {
-    const reason = prompt("Enter revocation reason:");
+  function openRevokeModal(product) {
+    selectedProductForRevocation = product;
+    document.getElementById("revokeProductName").innerText =
+      product.product_name || "Unknown Product";
+    document.getElementById("revokeProductSerial").innerText =
+      `Serial: ${product.serial_number || "-"}`;
+    document.getElementById("revokeReason").value = "";
+    document.getElementById("revokeMessage").innerText = "";
+    document.getElementById("revokeMessage").className = "modal-message";
+    document.getElementById("revokeModal").hidden = false;
+    document.getElementById("revokeReason").focus();
+  }
 
-    if (!reason) {
-      alert("Reason is required");
+  function closeRevokeModal() {
+    document.getElementById("revokeModal").hidden = true;
+    selectedProductForRevocation = null;
+  }
+
+  async function submitRevocation() {
+    const reason = document.getElementById("revokeReason").value.trim();
+    const message = document.getElementById("revokeMessage");
+    const confirmButton = document.getElementById("confirmRevokeBtn");
+
+    if (!selectedProductForRevocation) {
       return;
     }
 
-    const res = await fetch(apiUrl("/api/product/revoke"), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        product_id: productId,
-        reason: reason
-      })
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.error || "Revocation failed");
+    if (reason.length < 5) {
+      message.innerText = "Please enter a clear revocation reason.";
+      message.className = "modal-message error";
       return;
     }
 
-    alert("Product revoked");
-    loadProducts();
+    confirmButton.disabled = true;
+    confirmButton.innerText = "Revoking...";
+    message.innerText = "";
+
+    try {
+      const res = await fetch(apiUrl("/api/product/revoke"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          product_id: selectedProductForRevocation.product_id,
+          reason: reason
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        message.innerText = data.error || "Revocation failed. Please try again.";
+        message.className = "modal-message error";
+        confirmButton.disabled = false;
+        confirmButton.innerText = "Confirm Revocation";
+        return;
+      }
+
+      message.innerText = "Product revoked successfully.";
+      message.className = "modal-message success";
+      loadProducts();
+      setTimeout(closeRevokeModal, 700);
+    } catch (err) {
+      message.innerText = "Unable to connect to the server. Please try again.";
+      message.className = "modal-message error";
+    } finally {
+      confirmButton.disabled = false;
+      confirmButton.innerText = "Confirm Revocation";
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
   loadProducts();

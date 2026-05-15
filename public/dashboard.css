@@ -475,10 +475,12 @@ button:disabled {
   color: #1e40af;
 }
 
-.activity-list,
 .activity-list {
   display: grid;
   gap: 0;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .activity-item {
