@@ -186,7 +186,8 @@ router.post("/product/revoke", async (req, res) => {
     await client.query(
       `UPDATE product
        SET product_status = 'revoked',
-           revoke_reason = $2
+           revoke_reason = $2,
+           updated_at = NOW()
        WHERE product_id = $1`,
       [product_id, reason]
     );
