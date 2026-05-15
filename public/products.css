@@ -3,12 +3,6 @@
   padding: 20px;
 }
 
-.title {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
 input {
   padding: 8px;
   border-radius: 6px;

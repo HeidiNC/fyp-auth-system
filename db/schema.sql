@@ -41,6 +41,21 @@ CREATE TABLE IF NOT EXISTS ledger_block (
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS product_set_updated_at ON product;
+
+CREATE TRIGGER product_set_updated_at
+BEFORE UPDATE ON product
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
 CREATE INDEX IF NOT EXISTS idx_scan_log_qr_time
   ON scan_log(qr_id, scan_time DESC);
 
