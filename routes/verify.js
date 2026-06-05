@@ -49,14 +49,25 @@ function minutesBetween(first, second) {
   return Math.abs(new Date(second) - new Date(first)) / 60000;
 }
 
-function analyzeScanHistory(scans) {
-  if (scans.length > SCAN_HIGH_RISK_COUNT) {
-    return {
-      risk: "High",
-      message: "Multiple scans detected within a short verification window"
-    };
-  }
+function hasDifferentScanContext(scans) {
+  const devices = new Set();
+  const locations = new Set();
 
+  scans.forEach(scan => {
+    if (scan.device_type) {
+      devices.add(scan.device_type);
+    }
+
+    const location = parseLocation(scan.scan_location);
+    if (location) {
+      locations.add(`${location.latitude.toFixed(3)},${location.longitude.toFixed(3)}`);
+    }
+  });
+
+  return devices.size > 1 || locations.size > 1;
+}
+
+function analyzeScanHistory(scans) {
   for (let index = 1; index < scans.length; index += 1) {
     const previous = scans[index - 1];
     const current = scans[index];
@@ -81,10 +92,19 @@ function analyzeScanHistory(scans) {
     }
   }
 
-  if (scans.length > SCAN_MEDIUM_RISK_COUNT) {
+  const hasDifferentContext = hasDifferentScanContext(scans);
+
+  if (hasDifferentContext && scans.length > SCAN_HIGH_RISK_COUNT) {
+    return {
+      risk: "High",
+      message: "Multiple scans detected from different verification contexts"
+    };
+  }
+
+  if (hasDifferentContext && scans.length > SCAN_MEDIUM_RISK_COUNT) {
     return {
       risk: "Medium",
-      message: "Unusual repeated scan behaviour detected"
+      message: "Repeated scans detected from different verification contexts"
     };
   }
 
@@ -190,7 +210,7 @@ router.post("/verify", async (req, res) => {
     const scanCount = parseInt(scanCountResult.rows[0].count, 10);
 
     const recentScanResult = await client.query(
-      `SELECT scan_time, scan_location
+      `SELECT scan_time, scan_location, device_type
        FROM scan_log
        WHERE qr_id = $1
          AND scan_time >= NOW() - ($2::text || ' minutes')::interval
