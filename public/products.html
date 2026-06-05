@@ -136,13 +136,6 @@
           <td>
             <div class="row-actions">
               <button type="button" data-view-qr>View QR</button>
-              <button
-                type="button"
-                data-download
-                ${p.product_status === 'revoked' ? 'disabled' : ''}
-              >
-                Download
-              </button>
 
               ${
                 p.product_status === 'revoked'
@@ -156,11 +149,6 @@
         const viewQrButton = row.querySelector("[data-view-qr]");
         viewQrButton.addEventListener("click", () => {
           openQrModal(p, qrImage);
-        });
-
-        const downloadButton = row.querySelector("[data-download]");
-        downloadButton.addEventListener("click", () => {
-          downloadQR(qrImage, p.serial_number);
         });
 
         const revokeButton = row.querySelector("[data-revoke]");
