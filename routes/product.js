@@ -278,12 +278,13 @@ router.get("/product/suspicious", async (req, res) => {
       JOIN qr_code q ON p.product_id = q.product_id
       JOIN clone_risk cr ON q.qr_id = cr.qr_id
       WHERE p.product_status <> 'revoked'
-        AND cr.risk_level IN ('Medium', 'High')
+        AND cr.risk_level IN ('Medium', 'High', 'Very High')
       ORDER BY
         CASE cr.risk_level
-          WHEN 'High' THEN 1
-          WHEN 'Medium' THEN 2
-          ELSE 3
+          WHEN 'Very High' THEN 1
+          WHEN 'High' THEN 2
+          WHEN 'Medium' THEN 3
+          ELSE 4
         END,
         p.product_id DESC
       `
