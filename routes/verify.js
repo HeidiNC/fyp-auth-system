@@ -63,13 +63,37 @@ function hasMultipleApproximateLocations(scans) {
   return locations.size > 1;
 }
 
+function hasDistantLocations(scans) {
+  const locations = scans
+    .map(scan => parseLocation(scan.scan_location))
+    .filter(Boolean);
+
+  for (let firstIndex = 0; firstIndex < locations.length; firstIndex += 1) {
+    for (
+      let secondIndex = firstIndex + 1;
+      secondIndex < locations.length;
+      secondIndex += 1
+    ) {
+      if (
+        haversineDistanceKm(locations[firstIndex], locations[secondIndex]) >
+        DISTANCE_THRESHOLD_KM
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function analyzeScanHistory(scans) {
   const hasDifferentLocations = hasMultipleApproximateLocations(scans);
+  const hasFarLocations = hasDistantLocations(scans);
 
-  if (hasDifferentLocations && scans.length > SCAN_HIGH_RISK_COUNT) {
+  if (hasDifferentLocations && hasFarLocations && scans.length > SCAN_HIGH_RISK_COUNT) {
     return {
       risk: "High",
-      message: "Multiple scans detected from different locations within a short verification window"
+      message: "Multiple scans detected from distant locations within a short verification window"
     };
   }
 
@@ -97,10 +121,10 @@ function analyzeScanHistory(scans) {
     }
   }
 
-  if (hasDifferentLocations && scans.length > SCAN_MEDIUM_RISK_COUNT) {
+  if (hasDifferentLocations && hasFarLocations && scans.length > SCAN_MEDIUM_RISK_COUNT) {
     return {
       risk: "Medium",
-      message: "Unusual repeated scan behaviour detected across different locations"
+      message: "Unusual repeated scan behaviour detected across distant locations"
     };
   }
 
