@@ -49,11 +49,27 @@ function minutesBetween(first, second) {
   return Math.abs(new Date(second) - new Date(first)) / 60000;
 }
 
+function hasMultipleApproximateLocations(scans) {
+  const locations = new Set();
+
+  scans.forEach(scan => {
+    const location = parseLocation(scan.scan_location);
+
+    if (location) {
+      locations.add(`${location.latitude.toFixed(3)},${location.longitude.toFixed(3)}`);
+    }
+  });
+
+  return locations.size > 1;
+}
+
 function analyzeScanHistory(scans) {
-  if (scans.length > SCAN_HIGH_RISK_COUNT) {
+  const hasDifferentLocations = hasMultipleApproximateLocations(scans);
+
+  if (hasDifferentLocations && scans.length > SCAN_HIGH_RISK_COUNT) {
     return {
       risk: "High",
-      message: "Multiple scans detected within a short verification window"
+      message: "Multiple scans detected from different locations within a short verification window"
     };
   }
 
@@ -81,10 +97,10 @@ function analyzeScanHistory(scans) {
     }
   }
 
-  if (scans.length > SCAN_MEDIUM_RISK_COUNT) {
+  if (hasDifferentLocations && scans.length > SCAN_MEDIUM_RISK_COUNT) {
     return {
       risk: "Medium",
-      message: "Unusual repeated scan behaviour detected"
+      message: "Unusual repeated scan behaviour detected across different locations"
     };
   }
 
