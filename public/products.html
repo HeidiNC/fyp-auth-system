@@ -68,12 +68,40 @@
     </div>
   </div>
 
+  <div id="qrModal" class="modal-backdrop" hidden>
+    <div class="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+      <div class="qr-modal-head">
+        <div>
+          <span class="modal-kicker">Verification QR</span>
+          <h2 id="qrTitle">Product QR Code</h2>
+        </div>
+        <button type="button" class="icon-close" onclick="closeQrModal()" aria-label="Close QR preview">X</button>
+      </div>
+
+      <div class="qr-preview-box">
+        <img id="qrPreviewImage" src="" alt="Product verification QR code">
+      </div>
+
+      <div class="selected-product qr-product-details">
+        <span>Selected Product</span>
+        <strong id="qrProductName">-</strong>
+        <small id="qrProductSerial">-</small>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" onclick="downloadPreviewQR()">Download QR</button>
+        <button type="button" class="cancel-button" onclick="closeQrModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="api-config.js"></script>
   <script src="admin-auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
   <script>
   let selectedProductForRevocation = null;
+  let selectedQrPreview = null;
 
   async function loadProducts() {
     const res = await fetch(apiUrl("/api/product/list"));
@@ -106,20 +134,29 @@
             </span>
           </td>
           <td>
-            <button
-              data-download
-              ${p.product_status === 'revoked' ? 'disabled' : ''}
-            >
-              Download
-            </button>
+            <div class="row-actions">
+              <button type="button" data-view-qr>View QR</button>
+              <button
+                type="button"
+                data-download
+                ${p.product_status === 'revoked' ? 'disabled' : ''}
+              >
+                Download
+              </button>
 
-            ${
-              p.product_status === 'revoked'
-                ? ''
-                : `<button data-revoke>Revoke</button>`
-            }
+              ${
+                p.product_status === 'revoked'
+                  ? ''
+                  : `<button type="button" class="danger-table-button" data-revoke>Revoke</button>`
+              }
+            </div>
           </td>
         `;
+
+        const viewQrButton = row.querySelector("[data-view-qr]");
+        viewQrButton.addEventListener("click", () => {
+          openQrModal(p, qrImage);
+        });
 
         const downloadButton = row.querySelector("[data-download]");
         downloadButton.addEventListener("click", () => {
@@ -156,6 +193,34 @@
     document.getElementById("revokeMessage").className = "modal-message";
     document.getElementById("revokeModal").hidden = false;
     document.getElementById("revokeReason").focus();
+  }
+
+  function openQrModal(product, qrImage) {
+    selectedQrPreview = {
+      image: qrImage,
+      serial: product.serial_number || "product-qr"
+    };
+
+    document.getElementById("qrPreviewImage").src = qrImage;
+    document.getElementById("qrProductName").innerText =
+      product.product_name || "Unknown Product";
+    document.getElementById("qrProductSerial").innerText =
+      `Serial: ${product.serial_number || "-"}`;
+    document.getElementById("qrModal").hidden = false;
+  }
+
+  function closeQrModal() {
+    document.getElementById("qrModal").hidden = true;
+    document.getElementById("qrPreviewImage").src = "";
+    selectedQrPreview = null;
+  }
+
+  function downloadPreviewQR() {
+    if (!selectedQrPreview) {
+      return;
+    }
+
+    downloadQR(selectedQrPreview.image, selectedQrPreview.serial);
   }
 
   function closeRevokeModal() {

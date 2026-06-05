@@ -41,7 +41,7 @@ tr {
 td button {
   padding: 8px 10px;
   font-size: 12px;
-  width: 100px;
+  width: auto;
 }
 
 tr:hover {
@@ -141,6 +141,25 @@ button {
   background: #1e40af;
 }
 
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.row-actions button {
+  margin-top: 0;
+  min-width: 82px;
+}
+
+.danger-table-button {
+  background: #dc2626;
+}
+
+.danger-table-button:hover {
+  background: #b91c1c;
+}
+
 button:disabled {
   background: #64748b;
   cursor: not-allowed;
@@ -162,13 +181,78 @@ button:disabled {
   display: none;
 }
 
-.revoke-modal {
+.revoke-modal,
+.qr-modal {
   width: min(480px, 100%);
   background: #ffffff;
   border: 1px solid #fecaca;
   border-radius: 18px;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
   padding: 26px;
+}
+
+.qr-modal {
+  border-color: #bfdbfe;
+}
+
+.qr-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modal-kicker {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.qr-modal h2 {
+  margin: 6px 0 0;
+}
+
+.icon-close {
+  width: 36px;
+  height: 36px;
+  margin-top: 0;
+  padding: 0;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.icon-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.qr-preview-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 22px 0 18px;
+  padding: 20px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+}
+
+.qr-preview-box img {
+  width: min(260px, 100%);
+  height: auto;
+  padding: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.qr-product-details {
+  margin-bottom: 0;
 }
 
 .modal-icon {
