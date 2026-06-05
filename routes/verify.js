@@ -53,14 +53,9 @@ function minutesBetween(first, second) {
 }
 
 function getScanContext(scans) {
-  const devices = new Set();
   const locations = new Set();
 
   scans.forEach(scan => {
-    if (scan.device_type) {
-      devices.add(scan.device_type);
-    }
-
     const location = parseLocation(scan.scan_location);
     if (location) {
       locations.add(`${location.latitude.toFixed(3)},${location.longitude.toFixed(3)}`);
@@ -68,9 +63,8 @@ function getScanContext(scans) {
   });
 
   return {
-    deviceCount: devices.size,
     locationCount: locations.size,
-    hasDifferentContext: devices.size > 1 || locations.size > 1
+    hasDifferentLocation: locations.size > 1
   };
 }
 
@@ -149,23 +143,15 @@ function analyzeScanHistory(scans) {
   const scanContext = getScanContext(scans);
   const scanSpanMinutes = getScanSpanMinutes(scans);
 
-  if (scanContext.hasDifferentContext && scans.length > SCAN_HIGH_RISK_COUNT) {
+  if (scanContext.locationCount > 1 && scans.length > SCAN_HIGH_RISK_COUNT) {
     score += 30;
-    reasons.push("High scan frequency from different verification contexts");
+    reasons.push("High scan frequency from different approximate locations");
   } else if (
-    scanContext.hasDifferentContext &&
+    scanContext.locationCount > 1 &&
     scans.length > SCAN_MEDIUM_RISK_COUNT
   ) {
     score += 15;
-    reasons.push("Repeated scans from different verification contexts");
-  }
-
-  if (scanContext.deviceCount > SCAN_HIGH_RISK_COUNT) {
-    score += 30;
-    reasons.push("Large number of different devices scanned the same QR code");
-  } else if (scanContext.deviceCount > 1 && scans.length > SCAN_MEDIUM_RISK_COUNT) {
-    score += 15;
-    reasons.push("Multiple devices scanned the same QR code");
+    reasons.push("Repeated scans from different approximate locations");
   }
 
   if (scanContext.locationCount > 1) {
@@ -174,7 +160,7 @@ function analyzeScanHistory(scans) {
   }
 
   if (
-    scanContext.hasDifferentContext &&
+    scanContext.locationCount > 1 &&
     scans.length > SCAN_HIGH_RISK_COUNT &&
     scanSpanMinutes <= Math.max(2, SCAN_WINDOW_MINUTES / 2)
   ) {
@@ -281,7 +267,7 @@ router.post("/verify", async (req, res) => {
     const scanCount = parseInt(scanCountResult.rows[0].count, 10);
 
     const recentScanResult = await client.query(
-      `SELECT scan_time, scan_location, device_type
+      `SELECT scan_time, scan_location
        FROM scan_log
        WHERE qr_id = $1
          AND scan_time >= NOW() - ($2::text || ' minutes')::interval
