@@ -27,42 +27,42 @@
       <a class="title-action" href="products.html">Manage Products</a>
     </div>
 
-    <div class="revocation-dashboard">
-      <div class="revocation-side">
-        <div class="card stat-card danger-stat">
-          <div class="stat-head">
-            <div class="stat-icon">!</div>
-            <div>
-              <div class="stat-label">Total Revocations</div>
-              <h2 id="totalRevoked">0</h2>
-              <div class="stat-foot">All recorded revoked products</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card filter-panel">
-          <div class="panel-heading">
-            <h3>Search and Filter</h3>
-            <p>Filter history by product name, serial number, or revocation reason.</p>
-          </div>
-
-          <div class="search-bar">
-            <span class="search-icon"></span>
-            <input
-              type="text"
-              placeholder="Search by product, serial, or reason"
-              id="searchInput"
-            >
-            <button class="clear-search-btn" type="button" onclick="clearSearch()">Clear</button>
-          </div>
-
-          <div class="filter-meta">
-            <div class="filter-chip critical-chip">Status: Revoked</div>
-            <div class="filter-chip" id="visibleCountChip">Visible records: 0</div>
+    <div class="revocation-top-row">
+      <div class="card stat-card danger-stat">
+        <div class="stat-head">
+          <div class="stat-icon">!</div>
+          <div>
+            <div class="stat-label">Total Revocations</div>
+            <h2 id="totalRevoked">0</h2>
+            <div class="stat-foot">All recorded revoked products</div>
           </div>
         </div>
       </div>
 
+      <div class="card filter-panel">
+        <div class="panel-heading">
+          <h3>Search and Filter</h3>
+          <p>Filter history by product name, serial number, or revocation reason.</p>
+        </div>
+
+        <div class="search-bar">
+          <span class="search-icon"></span>
+          <input
+            type="text"
+            placeholder="Search by product, serial, or reason"
+            id="searchInput"
+          >
+          <button class="clear-search-btn" type="button" onclick="clearSearch()">Clear</button>
+        </div>
+
+        <div class="filter-meta">
+          <div class="filter-chip critical-chip">Status: Revoked</div>
+          <div class="filter-chip" id="visibleCountChip">Visible records: 0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-layout">
       <div class="card history-panel">
         <div class="records-head">
           <div class="panel-heading">
