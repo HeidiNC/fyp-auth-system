@@ -9,9 +9,6 @@ const SCAN_HIGH_RISK_COUNT = Number(process.env.CLONE_MAX_SCANS || 3);
 const SCAN_MEDIUM_RISK_COUNT = Number(process.env.CLONE_NORMAL_THRESHOLD || 2);
 const DISTANCE_THRESHOLD_KM = Number(process.env.CLONE_DISTANCE_KM || 50);
 const MAX_TRAVEL_MINUTES = Number(process.env.CLONE_MAX_TRAVEL_MINUTES || 10);
-const MEDIUM_RISK_SCORE = Number(process.env.CLONE_MEDIUM_RISK_SCORE || 25);
-const HIGH_RISK_SCORE = Number(process.env.CLONE_HIGH_RISK_SCORE || 50);
-const VERY_HIGH_RISK_SCORE = Number(process.env.CLONE_VERY_HIGH_RISK_SCORE || 80);
 
 function parseLocation(rawLocation) {
   if (!rawLocation) {
@@ -52,70 +49,13 @@ function minutesBetween(first, second) {
   return Math.abs(new Date(second) - new Date(first)) / 60000;
 }
 
-function getScanContext(scans) {
-  const locations = new Set();
-
-  scans.forEach(scan => {
-    const location = parseLocation(scan.scan_location);
-    if (location) {
-      locations.add(`${location.latitude.toFixed(3)},${location.longitude.toFixed(3)}`);
-    }
-  });
-
-  return {
-    locationCount: locations.size,
-    hasDifferentLocation: locations.size > 1
-  };
-}
-
-function getScanSpanMinutes(scans) {
-  if (scans.length < 2) {
-    return 0;
-  }
-
-  return minutesBetween(scans[0].scan_time, scans[scans.length - 1].scan_time);
-}
-
-function classifyRisk(score, reasons) {
-  if (score >= VERY_HIGH_RISK_SCORE) {
-    return {
-      risk: "Very High",
-      score,
-      message:
-        "Severe clone-risk indicators detected. Administrator review and possible revocation are recommended.",
-      reasons
-    };
-  }
-
-  if (score >= HIGH_RISK_SCORE) {
+function analyzeScanHistory(scans) {
+  if (scans.length > SCAN_HIGH_RISK_COUNT) {
     return {
       risk: "High",
-      score,
-      message: "Strong indicators of possible QR code cloning were detected.",
-      reasons
+      message: "Multiple scans detected within a short verification window"
     };
   }
-
-  if (score >= MEDIUM_RISK_SCORE) {
-    return {
-      risk: "Medium",
-      score,
-      message: "Unusual scan behaviour detected. Further monitoring is recommended.",
-      reasons
-    };
-  }
-
-  return {
-    risk: "Low",
-    score,
-    message: "Product verified successfully",
-    reasons
-  };
-}
-
-function analyzeScanHistory(scans) {
-  let score = 0;
-  const reasons = [];
 
   for (let index = 1; index < scans.length; index += 1) {
     const previous = scans[index - 1];
@@ -134,41 +74,24 @@ function analyzeScanHistory(scans) {
       distanceKm > DISTANCE_THRESHOLD_KM &&
       travelMinutes < MAX_TRAVEL_MINUTES
     ) {
-      score += 60;
-      reasons.push("Geographically distant scans occurred within an unrealistic timeframe");
-      break;
+      return {
+        risk: "High",
+        message: "Scan locations changed too far too quickly for normal usage"
+      };
     }
   }
 
-  const scanContext = getScanContext(scans);
-  const scanSpanMinutes = getScanSpanMinutes(scans);
-
-  if (scanContext.locationCount > 1 && scans.length > SCAN_HIGH_RISK_COUNT) {
-    score += 30;
-    reasons.push("High scan frequency from different approximate locations");
-  } else if (
-    scanContext.locationCount > 1 &&
-    scans.length > SCAN_MEDIUM_RISK_COUNT
-  ) {
-    score += 15;
-    reasons.push("Repeated scans from different approximate locations");
+  if (scans.length > SCAN_MEDIUM_RISK_COUNT) {
+    return {
+      risk: "Medium",
+      message: "Unusual repeated scan behaviour detected"
+    };
   }
 
-  if (scanContext.locationCount > 1) {
-    score += 10;
-    reasons.push("Scans were recorded from more than one approximate location");
-  }
-
-  if (
-    scanContext.locationCount > 1 &&
-    scans.length > SCAN_HIGH_RISK_COUNT &&
-    scanSpanMinutes <= Math.max(2, SCAN_WINDOW_MINUTES / 2)
-  ) {
-    score += 20;
-    reasons.push("Sudden scan spike detected within a short period");
-  }
-
-  return classifyRisk(score, reasons);
+  return {
+    risk: "Low",
+    message: "Product verified successfully"
+  };
 }
 
 router.post("/verify", async (req, res) => {
@@ -299,8 +222,6 @@ router.post("/verify", async (req, res) => {
       serial: data.serial_number,
       scans: scanCount,
       risk: riskAssessment.risk,
-      risk_score: riskAssessment.score,
-      risk_reasons: riskAssessment.reasons,
       message: riskAssessment.message
     });
   } catch (err) {

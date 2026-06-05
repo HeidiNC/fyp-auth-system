@@ -105,11 +105,7 @@
       } else if (data.status === "Suspicious") {
         document.getElementById("icon").innerText = "⚠";
         document.getElementById("statusText").innerText =
-          data.risk === "Very High"
-            ? "Revocation Review Recommended"
-            : data.risk === "High"
-              ? "Possible Clone Detected"
-              : "Suspicious Product";
+          data.risk === "High" ? "Possible Clone Detected" : "Suspicious Product";
         document.getElementById("model").innerText = "Verification Warning";
         document.getElementById("manufacturer").innerText = "Trusted Brand";
         document.getElementById("origin").innerText = "Verification Required";
