@@ -27,19 +27,22 @@
 .stat-card {
   position: relative;
   overflow: hidden;
-  padding-left: 78px;
+  padding: 24px 24px 24px 86px;
   min-height: 112px;
   border-top: 4px solid #fecaca;
+  background:
+    linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
+  box-shadow: 0 14px 34px rgba(185, 28, 28, 0.08);
 }
 
 .stat-card::after {
   content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 72px;
-  height: 72px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0));
+  top: -34px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.16), rgba(239, 68, 68, 0));
 }
 
 .stat-label {
@@ -56,10 +59,10 @@
 
 .stat-icon {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 44px;
-  height: 44px;
+  top: 24px;
+  left: 24px;
+  width: 48px;
+  height: 48px;
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -125,14 +128,23 @@
 }
 
 .stat-card h2 {
-  margin: 10px 0 6px;
-  font-size: 2rem;
+  margin: 8px 0 6px;
+  font-size: 2.25rem;
   letter-spacing: -0.04em;
+  color: #991b1b;
 }
 
 .stat-foot {
   color: #64748b;
   font-size: 0.92rem;
+}
+
+.filter-panel,
+.history-panel {
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid #dbe5f0;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
 }
 
 .revocation-top-row {
@@ -263,6 +275,8 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eef2f7;
 }
 
 .history-scroll {
@@ -280,11 +294,12 @@
 
 .revocation-card {
   position: relative;
-  background: #fefefe;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 18px 18px 18px 72px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+  padding: 20px 20px 20px 76px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -303,10 +318,10 @@
 
 .record-icon {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 38px;
-  height: 38px;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -321,8 +336,9 @@
 
 .revocation-card h3 {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 1.12rem;
   letter-spacing: -0.02em;
+  color: #0f172a;
 }
 
 .meta-line {
@@ -361,6 +377,7 @@
   padding: 14px 16px;
   background: #fff7ed;
   border: 1px solid #fed7aa;
+  border-left: 4px solid #f97316;
   border-radius: 14px;
 }
 
