@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">Simple System Architecture</title>
+  <desc id="desc">Corrected SVG architecture diagram for the product authentication system.</desc>
+
+  <defs>
+    <style>
+      .bg {
+        fill: #f8fafc;
+      }
+
+      .title {
+        font: 700 26px Arial;
+        fill: #0f172a;
+      }
+
+      .layer-title {
+        font: 700 16px Arial;
+        fill: #111827;
+      }
+
+      .text {
+        font: 700 15px Arial;
+        fill: #0f172a;
+      }
+
+      .small {
+        font: 13px Arial;
+        fill: #334155;
+      }
+
+      .label {
+        font: 600 12px Arial;
+        fill: #475569;
+      }
+
+      .layer {
+        fill: #ffffff;
+        stroke: #334155;
+        stroke-width: 2;
+      }
+
+      .client {
+        fill: #e0f2fe;
+        stroke: #2563eb;
+        stroke-width: 2;
+      }
+
+      .app {
+        fill: #ede9fe;
+        stroke: #7c3aed;
+        stroke-width: 2;
+      }
+
+      .data {
+        fill: #f0fdf4;
+        stroke: #15803d;
+        stroke-width: 2;
+      }
+
+      .external {
+        fill: #fef3c7;
+        stroke: #d97706;
+        stroke-width: 2;
+      }
+
+      .arrow {
+        stroke: #334155;
+        stroke-width: 2.5;
+        fill: none;
+        marker-end: url(#arrowhead);
+      }
+
+      .thin-arrow {
+        stroke: #64748b;
+        stroke-width: 2;
+        fill: none;
+        marker-end: url(#arrowhead);
+      }
+    </style>
+
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#334155" />
+    </marker>
+  </defs>
+
+  <!-- Client Layer -->
+  <rect class="layer" x="145" y="65" width="910" height="135" rx="8" />
+  <text class="layer-title" x="600" y="95" text-anchor="middle">Client Layer</text>
+
+  <rect class="client" x="255" y="120" width="260" height="56" rx="6" />
+  <text class="text" x="385" y="154" text-anchor="middle">Admin Dashboard</text>
+
+  <rect class="client" x="685" y="120" width="260" height="56" rx="6" />
+  <text class="text" x="815" y="154" text-anchor="middle">Consumer Web App</text>
+
+  <!-- Application Layer -->
+  <rect class="layer" x="60" y="255" width="1080" height="325" rx="8" />
+  <text class="layer-title" x="600" y="285" text-anchor="middle">Application Layer</text>
+
+  <rect class="app" x="230" y="320" width="250" height="64" rx="6" />
+  <text class="text" x="355" y="347" text-anchor="middle">Authentication Module</text>
+  <text class="small" x="355" y="368" text-anchor="middle">Admin JWT session</text>
+
+  <rect class="app" x="590" y="320" width="250" height="64" rx="6" />
+  <text class="text" x="715" y="347" text-anchor="middle">Verification Controller</text>
+  <text class="small" x="715" y="368" text-anchor="middle">Main scan workflow</text>
+
+  <rect class="app" x="120" y="470" width="230" height="64" rx="6" />
+  <text class="text" x="235" y="497" text-anchor="middle">QR Integrity Check</text>
+  <text class="small" x="235" y="518" text-anchor="middle">HMAC payload validation</text>
+
+  <rect class="app" x="385" y="470" width="210" height="64" rx="6" />
+  <text class="text" x="490" y="497" text-anchor="middle">Clone Detection</text>
+  <text class="small" x="490" y="518" text-anchor="middle">Scan frequency / location</text>
+
+  <rect class="app" x="630" y="470" width="220" height="64" rx="6" />
+  <text class="text" x="740" y="497" text-anchor="middle">Product Management</text>
+  <text class="small" x="740" y="518" text-anchor="middle">Register / Revoke product</text>
+
+  <rect class="app" x="885" y="470" width="200" height="64" rx="6" />
+  <text class="text" x="985" y="497" text-anchor="middle">Ledger Service</text>
+  <text class="small" x="985" y="518" text-anchor="middle">REGISTER / VERIFY / REVOKE</text>
+
+  <rect class="external" x="885" y="335" width="190" height="52" rx="6" />
+  <text class="text" x="980" y="356" text-anchor="middle">IP Geolocation API</text>
+  <text class="small" x="980" y="376" text-anchor="middle">Scan location lookup</text>
+
+  <!-- Data Layer -->
+  <rect class="layer" x="145" y="650" width="910" height="125" rx="8" />
+  <text class="layer-title" x="550" y="680" text-anchor="middle">Data Layer</text>
+
+  <rect class="data" x="215" y="715" width="230" height="46" rx="6" />
+  <text class="text" x="330" y="744" text-anchor="middle">Product &amp; QR Data</text>
+
+  <rect class="data" x="485" y="715" width="230" height="46" rx="6" />
+  <text class="text" x="600" y="744" text-anchor="middle">Scan Logs &amp; Risk</text>
+
+  <rect class="data" x="755" y="715" width="230" height="46" rx="6" />
+  <text class="text" x="870" y="744" text-anchor="middle">Ledger Block</text>
+
+  <!-- Client to application -->
+  <line class="arrow" x1="355" y1="176" x2="355" y2="320" />
+  <text class="label" x="280" y="226">Admin login</text>
+
+  <line class="arrow" x1="780" y1="176" x2="780" y2="320" />
+  <text class="label" x="790" y="226">Scan QR</text>
+
+  <path class="arrow" d="M 840 352 L 885 352" />
+  <text class="label" x="862" y="315" text-anchor="middle">Location</text>
+
+  <!-- Application routing -->
+  <line class="thin-arrow" x1="480" y1="352" x2="590" y2="352" />
+  <text class="label" x="535" y="315" text-anchor="middle">Protected admin APIs</text>
+
+  <path class="thin-arrow" d="M 715 384 L 715 430 L 235 430 L 235 470" />
+  <path class="thin-arrow" d="M 715 384 L 715 430 L 490 430 L 490 470" />
+  <path class="thin-arrow" d="M 715 384 L 715 470" />
+  <path class="thin-arrow" d="M 715 430 L 980 430 L 980 470" />
+
+  <!-- Application to data -->
+  <path class="arrow" d="M 235 534 L 235 615 L 300 615 L 300 715" />
+  <text class="label" x="190" y="606" text-anchor="middle">Validate QR</text>
+
+  <path class="arrow" d="M 490 534 L 490 615 L 600 615 L 600 715" />
+  <text class="label" x="650" y="632" text-anchor="middle">Save scan risk</text>
+
+  <path class="arrow" d="M 740 534 L 740 600 L 330 600 L 330 715" />
+  <text class="label" x="390" y="632" text-anchor="middle">Register / Revoke</text>
+
+  <path class="arrow" d="M 980 534 L 980 615 L 870 615 L 870 715" />
+  <text class="label" x="930" y="606" text-anchor="middle">Append block</text>
+
+  <!-- Response -->
+  <path class="arrow" d="M 730 320 L 730 235 L 730 235 L 730 176" />
+  <text class="label" x="670" y="226" text-anchor="middle">Verification result</text>
+</svg>

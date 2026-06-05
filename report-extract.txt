@@ -1,0 +1,2778 @@
+
+
+--- PAGE 1 ---
+ 
+ 
+ 
+ 
+ 
+ 
+Faculty of Computer Science and Information Technology 
+ 
+ 
+ 
+ENHANCED BLOCKCHAIN-BASED PRODUCT AUTHENTICATION 
+WITH CLONE-DETECTION AND REVOCATION FEATURES  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Heidi NC Motiun 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Bachelor of Computer Science with Honours 
+(Software Engineering) 
+2026 
+  
+
+
+--- PAGE 2 ---
+ 
+ 
+Enhanced Blockchain-Based Product Authentication with Clone-Detection 
+and Revocation Features 
+ 
+ 
+ 
+Heidi NC Motiun 
+ 
+ 
+ 
+A thesis submitted 
+In partial fulfilment of the requirements for the degree of Bachelor of Computer Science 
+with Honours 
+(Software Engineering) 
+ 
+ 
+ 
+ 
+Faculty of Computer Science and Information Technology 
+UNIVERSITI MALAYSIA SARAWAK 
+2021 
+
+--- PAGE 3 ---
+i 
+DECLARATION 
+I declare that the work in this thesis was carried out in accordance with the regulations of 
+Universiti Malaysia Sarawak. E xcept where due acknowledgements have been made,  the 
+work is that of the author alone. The thesis has not been accepted for any degree and is not 
+concurrently submitted in candidature of any other degree. 
+ 
+…………………………… 
+Signature 
+ 
+Name: Heidi NC Motiun 
+Matric No.: 83996 
+Faculty of Computer Science and Information Technology 
+Universiti Malaysia Sarawak 
+Date : 
+ 
+
+--- PAGE 4 ---
+ii 
+ACKNOWLEDGEMENT 
+I would like to express my sincere appreciation to all individuals who have guided and 
+supported me throughout the development of this project. I am especially grateful to my 
+supervisor, Associate Professor Ts. Dr. Adnan Shahid Khan, and my examiner, Ts. Dr. Lau 
+Sei Ping, for their guidance , valuable feedback, and constructive advice, which greatly 
+contributed to the successful completion of this work. 
+I would also like to extend my appreciation to the Final Year Project lecturer, Associate 
+Professor Dr. Chiew Kang Leng, for providing insigh tful lectures and valuable knowledge 
+that supported the development of this project. 
+Finally, I would like to express my heartfelt gratitude to my family and friends for their 
+continuous support, encouragement, and understanding throughout the project period. 
+ 
+ 
+ 
+
+--- PAGE 5 ---
+iii 
+ABSTRACT 
+The widespread circulation of counterfeit products has become a significant challenge in 
+modern supply chains, leading to financial losses and safety risks. Traditional authentication 
+methods such as barcodes, holograms, and centralized dat abases are vulnerable to 
+duplication and tampering, reducing trust in product verification. This project proposes a 
+blockchain-based product authentication system that integrates QR code verification, a 
+tamper-evident ledger, clone detection, and product r evocation mechanisms. Each product 
+is assigned a QR code containing a secure verification token with a unique identifier and 
+cryptographic integrity component. Upon scanning, the token is validated through backend 
+hash-based verification to ensure authenticity and detect manipulation. The system applies 
+core blockchain principles, including immutability and auditability, within a web -based 
+prototype. Consumers access the system through a mobile -friendly interface, while 
+manufacturers manage products  via an administrative dashboard.  To address QR code 
+duplication, a rule -based clone detection mechanism analyzes scan behavior and flags 
+suspicious patterns. Additionally, a revocation feature allows compromised products to be 
+invalidated, with all events  recorded in the tamper -evident ledger. The results demonstrate 
+that combining QR-based verification with blockchain -based principles enhances security, 
+transparency, and reliability. This project provides a practical approach to improving product 
+authentication while maintaining realistic implementation constraints. 
+Keywords: product authentication, blockchain-based system, QR code verification, clone 
+detection, tamper-evident ledger  
+ 
+
+--- PAGE 6 ---
+iv 
+Sistem Pengesahan Produk Berasaskan Blockchain Yang Dipertingkatkan Dengan 
+Mekanisme Pengesanan Klon Dan Pembatalan  
+ABSTRAK 
+Peredaran produk tiruan yang meluas telah menjadi cabaran utama dalam rantaian bekalan 
+moden, menyebabkan kerugian kewangan dan risiko keselamatan kepada pengguna. 
+Kaedah pengesahan tradisional seperti kod bar, hologram, dan pangkalan data berpusat 
+adalah terdedah kepada peniruan dan manipulasi, sekali gus mengurangkan kepercayaan 
+terhadap proses pengesahan produk. Projek ini mencadangkan satu sistem pengesahan 
+produk berasaskan blockchain yang menginteg rasikan pengesahan kod QR, lejar kalis 
+gangguan, pengesanan klon, dan mekanisme pembatalan produk. Setiap produk diberikan 
+kod QR yang mengandungi token pengesahan selamat dengan pengecam unik dan komponen 
+integriti kriptografi. Apabila diimbas, token ters ebut disahkan melalui pengesahan 
+berasaskan hash di bahagian backend untuk memastikan ketulenan dan mengesan sebarang 
+manipulasi. Sistem ini mengaplikasikan prinsip teras blockchain seperti ketakbolehubahan 
+dan kebolehkesanan dalam bentuk prototaip berasas kan web. Pengguna boleh mengakses 
+sistem melalui antara muka mesra mudah alih, manakala pengeluar mengurus produk 
+melalui papan pemuka pentadbiran. Bagi menangani peniruan kod QR, mekanisme 
+pengesanan klon berasaskan peraturan digunakan untuk menganalisis tingkah laku imbasan 
+dan menandakan corak mencurigakan. Selain itu, ciri pembatalan membolehkan produk 
+yang terjejas dibatalkan, dengan semua rekod disimpan dalam lejar kalis gangguan. 
+Keputusan menunjukkan bahawa gabungan pengesahan kod QR dengan prinsip berasaskan 
+blockchain dapat meningkatkan keselamatan, ketelusan, dan kebolehpercayaan. Projek ini 
+menyediakan pendekatan praktikal untuk meningkatkan pengesahan produk dalam 
+kekangan pelaksanaan sebenar. 
+
+--- PAGE 7 ---
+v 
+Kata kunci: pengesahan produk, sistem berasaskan blo ckchain, pengesahan kod QR, 
+pengesanan klon, lejar kalis gangguan  
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 8 ---
+vi 
+TABLE OF CONTENTS 
+ 
+ Page 
+DECLARATION i 
+ACKNOWLEDGEMENT ii 
+ABSTRACT iii 
+ABSTRAK iv 
+TABLE OF CONTENTS vi 
+LIST OF TABLES xi 
+LIST OF FIGURES xii 
+LIST OF ABBREVIATIONS xiv 
+CHAPTER 1 INTRODUCTION 1 
+1.1 Background 1 
+1.2 Problem Statement 2 
+1.3 Project Description 2 
+1.4 Scope 4 
+1.5 Aims and Objectives 5 
+1.6 Methodology 5 
+1.7 Significance of Project 7 
+1.8 Expected Outcome 8 
+
+--- PAGE 9 ---
+vii 
+1.9 Project Outline 8 
+1.10 Summary 9 
+CHAPTER 2 LITERATURE REVIEW 11 
+2.1 Introduction 11 
+2.2 Overview of Counterfeit Products 11 
+2.3 Blockchain Technology 12 
+2.3.1 Overview of Blockchain 12 
+2.3.2 Key Characteristics of Blockchain 13 
+2.3.3 Blockchain in Product Authentication 14 
+2.4 QR Code Technology 15 
+2.4.1 Overview of QR Codes 15 
+2.4.2 QR Codes in Product Verification 15 
+2.4.3 QR Code Vulnerabilities 16 
+2.5 Research Gap 16 
+2.6 Direction of the Proposed System 17 
+2.7 Chapter Summary 19 
+CHAPTER 3 REQUIREMENT ANALYSIS AND DESIGN 20 
+3.1 Introduction 20 
+3.2 Requirement Analysis 20 
+3.2.1 Source of Requirements 21 
+
+--- PAGE 10 ---
+viii 
+3.2.2 Functional Requirements 22 
+3.2.3 Non-Functional Requirements 22 
+3.3 System Design 23 
+3.3.1 System Overview 24 
+3.3.2 System Architecture 25 
+3.3.3 Data Flow Diagram (Level 0) 26 
+3.3.4 Entity Relationship Diagram (ERD) 26 
+3.3.5 Use Case Diagram 27 
+3.3.6 Activity Diagram 33 
+3.3.7 Sequence Diagram 35 
+3.3.8 Tamper-Evident Ledger Design 38 
+3.3.9 QR Code Security Design and Threat Assumptions 40 
+3.3.10 Clone Detection Design 42 
+3.3.11 Revocation Mechanism Design 46 
+3.3.12 API Design and Endpoints 48 
+3.3.13 User Interface Design 50 
+3.4 Summary 56 
+CHAPTER 4 IMPLEMENTATION 58 
+4.1 Introduction 58 
+4.2 System Requirements 58 
+
+--- PAGE 11 ---
+ix 
+4.2.1 Hardware Requirement 58 
+4.2.2 Software Requirements 59 
+4.3 System Development 60 
+4.3.1 Installation and Configuration 60 
+4.4 System Implementation 61 
+4.4.1 Backend Implementation 61 
+4.4.2 Database Implementation 65 
+4.4.3 Frontend Implementation 66 
+4.4.4 Graphical User Interface (GUI) 69 
+4.4.5 QR Code Security Implementation 72 
+4.4.6 Product Verification Module 75 
+4.4.7 Scan Tracking and Risk Detection 78 
+4.4.8 Ledger Block Integration 81 
+4.5 System Workflow 84 
+4.6 Discussion 86 
+CHAPTER 5 TESTING 88 
+5.1 Introduction 88 
+5.2 Software Testing 88 
+5.2.1 Functionality Test 89 
+5.2.2 Usability Testing 93 
+
+--- PAGE 12 ---
+x 
+5.3 Summary 95 
+CHAPTER 6 CONCLUSION AND FURTHER WORK 96 
+6.1 Introduction 96 
+6.2 Achievements of Objectives 96 
+6.3 Contribution 97 
+6.4 Limitations 98 
+6.5 Future Works 99 
+6.6 Conclusion 100 
+REFERENCES 102 
+ 
+
+--- PAGE 13 ---
+xi 
+LIST OF TABLES 
+  Page 
+Table 3.1  Use Case for Register Product 29 
+Table 3.2 Use Case for Generate QR Code 29 
+Table 3.3 Use Case for Revoke Product 30 
+Table 3.4 Use Case for View Product Status 30 
+Table 3.5 Use Case for View Scan Logs 31 
+Table 3.6 Use Case for Scan QR Code 31 
+Table 3.7 Use Case for Verify Product Authenticity 32 
+Table 3.8 Use Case for Check Revocation Status 32 
+Table 3.9 Use Case for View Product Information 33 
+Table 3.10 Use Case for Receive Revocation Alert 33 
+Table 3.11 Ledger Block Structure 39 
+Table 3.12 List of API Core Endpoints 49 
+Table 5.1  Functionality Test Cases 90 
+ 
+ 
+
+--- PAGE 14 ---
+xii 
+LIST OF FIGURES 
+Page 
+Figure 1.1 Waterfall Moder (Rajkumar, 2016) 6 
+Figure 2.1 Working of Blockchain (Wasnik et at., 2022) 12 
+Figure 3.1 System Architecture of the Product Authentication System 25 
+Figure 3.2 Data Flow Diagram (Level 0) of the Product Authentication System 26 
+Figure 3.3 Entity Relationship Diagram (ERD) for Product Authentication System 27 
+Figure 3.4 Use Case Diagram of the Product Authentication System 28 
+Figure 3.5 Activity Diagram of the Consumer Product Verification Process 34 
+Figure 3.6 Sequence Diagram for Product Registration 36 
+Figure 3.7 Sequence Diagram for Product Verification 37 
+Figure 3.8 Sequence Diagram for Product Revocation 38 
+Figure 3.9 Manufacturer Administrative Dashboard Interface 50 
+Figure 3.10 Manufacturer Analytics Dashboard Interface 51 
+Figure 3.11 Manufacturer Revocation History Interface 52 
+Figure 3.12 Consumer Scanning Module 53 
+Figure 3.13 Verification Result (Authentic Result) 54 
+Figure 3.14 Verification Result (Suspicious/Cloned Warning) 55 
+Figure 3.15 Verification Result (Revoked or Invalid Status) 56 
+Figure 4.1 Code Snippet for Product Registration Route 62 
+Figure 4.2 Code Snippet for Product Revocation Route 65 
+Figure 4.3 Implemented Database Table in pgAdmin 66 
+Figure 4.4 Admin Login Interface 67 
+Figure 4.5 Manufacturer Dashboard Interface 67 
+Figure 4.6  Product List Interface 68 
+
+--- PAGE 15 ---
+xiii 
+Figure 4.7 Analytics Dashboard 68 
+Figure 4.8 Revocation History Interface 69 
+Figure 4.9 Consumer Scanning Module 70 
+Figure 4.10 Authentic Product Verification Interface 70 
+Figure 4.11  Suspicious Product Verification Interface 71 
+Figure 4.12 Revoked Product Verification Interface 71 
+Figure 4.13  Invalid Product Verification Interface 72 
+Figure 4.14 Code Snippet for HMAC Signature Generation 73 
+Figure 4.15 Code Snippet for Signed QR Payload Validation 75 
+Figure 4.16  Generated QR Code with Signed Verification Payload 75 
+Figure 4.17 Code Snippet for Verification Request Processing 77 
+Figure 4.18 Code Snippet for Verification Response Logic 78 
+Figure 4.19 Code Snippet for Scan Log Recording 79 
+Figure 4.20 Code Snippet for Clone Risk Detection Logic 81 
+Figure 4.21 Code Snippet for Ledger Block Creation 82 
+Figure 4.22 Code Snippet for Ledger Integrity Validation 83 
+Figure 4.23  Ledger Validation Output 84 
+Figure 4.24 Overall System Workflow of the Product Authentication System 86 
+ 
+
+--- PAGE 16 ---
+xiv 
+LIST OF ABBREVIATIONS 
+QR Quick Response 
+ID Identification 
+SDLC System Development Life Cycle 
+URL Uniform Resource Locator 
+ERD Entity Relationship Diagram 
+UC Use Case 
+HMAC Hash-based Message Authentication Code 
+SHA Secure Hash Algorithm 
+REST Representational State Transfer 
+RESTful REST-based (REST architectural style) 
+API Application Programming Interface 
+  
+  
+  
+  
+  
+  
+  
+ 
+
+--- PAGE 17 ---
+1 
+CHAPTER 1  
+ 
+ 
+INTRODUCTION 
+1.1 Background 
+In recent years, counterfeit and imitation products have become a serious issue in 
+many industries such as pharmaceuticals, cosmetics, and electronics (Wasnik et al., 2022). 
+These fake products not only harm consumers but also affect the reputation and revenue of 
+genuine manufacturers (Nagar et al., 2023). Consumers often have no easy way to check 
+whether a product they purchased is original or fake. 
+Existing verification methods such as barcodes, holograms, and centralized online 
+databases are still vulnerable because they can be easily copied or tampered with (M 
+Mallegowda et al., 2022). This situation highlights the need for a more secure and transparent 
+solution to verify product authenticity and prevent counterfeiting. 
+Blockchain techn ology has been widely studied as a potential solution to these 
+challenges due to its ability to support tamper-evident and traceable record keeping through 
+cryptographic techniques and linked data structures. By linking each record to a previous 
+entry, blockchain-based systems make unauthorized modification of stored data significantly 
+more difficult. When combined with QR code –based product identification, blockchain 
+inspired mechanisms can support the assignment of a unique digital identity to each product, 
+which consumers can verify through a simple scan (Nagar et al., 2023). 
+This project aims to develop an enhanced blockchain -based product authentication 
+system with additional clone detection and revocation features. The clone detection 
+mechanism supports the identification of potentially duplicated or reused QR codes, while 
+
+--- PAGE 18 ---
+2 
+the revocation feature enables manufacturers to invalidate products that are confirmed to be 
+counterfeit or recalled. These mechanisms aim to improve consumer trust and support 
+manufacturers in managing product authenticity more effectively. 
+1.2 Problem Statement  
+The issue of counterfeit products continues to grow, affecting both consumers and 
+legitimate businesses. Many fake products look almost identical to the original ones, making 
+it difficult for customers to tell the difference. These counterfeits can cause safety risks, 
+financial losses, and damage to the reputation of trusted brands. 
+Most existing verification methods such as barcodes, QR codes, or holograms rely 
+on centralized databases or visual elements that can be easily copied or manipulated. Once 
+a QR code from an authentic product is cloned and reused on a fake product, the system may 
+still recognize it as genuine because it cannot detect repeated or abnormal scans. This creates 
+a major weakness for counterfeiters (Shankar & Jayavadivel, 2019). 
+Therefore, there is a need for a secure and tamper -evident product authentication 
+system that not only verifies product legitimacy but also supports the detection of cloned 
+identifiers and the revocation of compromised products. By applying blockchain principles 
+for data integrity and auditability, product records can be protected against unauthorized 
+modification while enabling transparent verification for both manufacturers and consumers. 
+1.3 Project Description  
+This project aims to develop a blockchain -based product authentication system that 
+verifies product authenticity and supports the detection of counterfeit items through QR code 
+scanning. In this context, the term blockchain -based refers to the application of blockchain  
+
+--- PAGE 19 ---
+3 
+principles such as cryptographic hash chaining, immutability, and append -only record 
+keeping, rather than the deployment of a fully decentralized blockchain network. 
+The system introduces two key security mechanisms. The first is clone detection, 
+which analyzes repeated QR code scan activities to identify potential misuse or duplication 
+of product identifiers. The clone detection mechanism is intentionally designed as a heuristic 
+risk indicator rather than a deterministic counterfeit classifier, acknowledging that absolute 
+counterfeit confirmation cannot be reliably inferred from scan behaviour alone. This 
+approach reflects real-world anti-counterfeit systems, where behavioural anomalies are used 
+to support investigatio n and decision -making rather than enforce automatic blocking. The 
+second mechanism is product revocation, which enables manufacturers to invalidate 
+products that have been confirmed as counterfeit, compromised, or recalled. 
+Each product is registered by th e manufacturer and assigned a unique QR code. 
+Rather than storing plaintext product details directly, the QR code encodes a 
+cryptographically protected verification payload that references registered product 
+information maintained in the backend system, such as the product identifier, batch number, 
+and manufacturing date. Product -related events, including registration, verification, and 
+revocation, are recorded in a tamper -evident ledger that applies blockchain principles to 
+ensure that once recorded, entries cannot be altered or removed without detection. 
+Consumers verify product authenticity by scanning the QR code using a web -based 
+application designed for mobile device access. During verification, the system evaluates the 
+product’s registration status, scan history, and revocation state. When abnormal scan patterns 
+are detected, the system provides a warning indicating potential clone risk rather than making 
+a definitive counterfeit determination. Manufacturers can review scan records and perform 
+
+--- PAGE 20 ---
+4 
+revocation actions when necessary, with all revocation events permanently recorded to 
+maintain transparency and traceability. 
+This project does not aim to implement a fully decentralized blockchain network or 
+distributed consensus mechanism. Instead, it applies co re blockchain principles, namely 
+cryptographic hash chaining, immutability, and append -only record keeping, to construct a 
+blockchain-inspired tamper-evident ledger suitable for controlled environments and proof 
+of-concept development. The focus of this pr oject is therefore on end -to-end product 
+authentication workflow robustness, rather than on decentralization performance or public 
+blockchain deployment. 
+1.4 Scope  
+This project focuses on the development of a web -based prototype for product 
+authentication usi ng blockchain principles. The system supports two primary user roles, 
+manufacturers and consumers. Manufacturers are responsible for registering products, 
+generating QR codes, and revoking products that are identified as invalid or compromised. 
+Consumers are able to verify product authenticity by scanning QR codes using a mobile-first 
+web interface accessed through a smartphone browser.  
+The scope of the project is limited to demonstrating core functionalities, including 
+product registration, QR code generation, authenticity verification, scan logging, clone risk 
+detection, and product revocation. The system operates within a controlled environment and 
+serves as a proof of concept to demonstrate how blockchain-inspired ledger mechanisms can 
+enhance data integrity and support counterfeit detection. The consumer-facing verification 4 
+module is implemented as a mobile-first web application utilizing the device camera for QR 
+scanning. 
+
+--- PAGE 21 ---
+5 
+System evaluation focuses on functional correctness, data integrity assurance, and 
+behavioural risk analysis rather than large -scale deployment performance or throughput 
+optimisation. Implementation of decentralized consensus mechanisms or multi -node 
+blockchain networks is beyond the scope of this project. 
+1.5 Aims and Objectives 
+The aim  of the project is to design and develop a blockchain -based system that 
+enhances product authenticity verification by integrating clone detection and product 
+revocation features for counterfeit prevention and consumer trust assurance. To achieve this 
+aim, the project focuses on several key objectives:   
+i. To design a secure system for registering and verifying product information 
+using unique QR codes.  
+ii. To implement clone detection and product revocation mechanisms to identify 
+and manage counterfeit risks. 
+iii. To develop a web -based prototype that integrates QR code generation, a 
+tamper evident ledger based on blockchain principles, and a product 
+verification interface. 
+1.6 Methodology  
+This project adopts the System Development Life Cycle (SDLC) approach using the 
+Waterfall Model. The Waterfall Model is selected because it offers a clear and structured 
+development process where each phase must be completed before moving to the next. This 
+5 model is suitable for this project since the system requirements are well -defined and the 
+
+--- PAGE 22 ---
+6 
+development process can follow a step -by-step sequence that aligns with the Final Year 
+Project timeline. 
+ 
+Figure 1.1 Waterfall Moder (Rajkumar, 2016) 
+The project begins with the requirement analysis phase, which includes identifying 
+the system’s main functions, limitations, and goals through a review of existing studies on 
+blockchain-based product authentication systems. The next phase, system design, focuses on 
+defining the system architecture, database structure, and data flow. This includes specifying 
+how system components such as the tamper-evident ledger, QR code generation mechanism, 
+product verification process, and clone detection logic interact to support secure and reliable 
+authentication. 
+During the development phase, a functional prototype is implemented based on the 
+approved system design. Web-based technologies are used to develop the user interface and 
+backend services, integrating product registration, verification, clone detect ion, and  
+revocation functionalities. Blockchain principles are applied through a ledger mechanism to 
+
+
+--- PAGE 23 ---
+7 
+ensure that critical system events are recorded in an immutable and auditable manner. Once 
+the system is developed, the testing phase will be conducted to ensure that all functions work 
+as intended and that the system can effectively detect and revoke counterfeit products. 
+Finally, a maintenance and documentation phase will take place to address any 
+issues, refine the system, and record the overall process for future improvements. 
+1.7 Significance of Project 
+This project provides several important benefits for consumers, manufacturers, and 
+the wider academic and industry communities. For consumers, the system enables instant 
+verification of product authenticity through QR code scanning, helping to improve trust and 
+reduce the risk of purchasing counterfeit products. For manufacturers, the system offers a 
+secure and transparent mechanism to monitor product verification activities, detect potential 
+cloning behaviour, and revoke compromised or recalled products. By applying blockchain 
+principles through a tamper -evident ledger, together with clone detection and revocation 
+mechanisms, the system enhances data integrity, accountability, and traceability within the 
+product authentication process. This design supports reliable record -keeping while 
+remaining practical for controlled implementation environments. From an academic 
+perspective, the project demonstrates how blockchain principles can be applied beyond 
+cryptocurrency applications, particularly in the context of product authentication and anti -
+counterfeiting systems. The proposed framework also provides a foundation for future 
+enhancement, such as integration with more advanced ledger infrastructures or extended  
+deployment scenarios, while maintaining the core focus on data integrity and verification 
+reliability.  
+
+--- PAGE 24 ---
+8 
+1.8 Expected Outcome 
+By the end of the project, a functional web -based prototype is expected to be 
+completed, demonstrating the application of blockchain princ iples for product 
+authentication. Each registered product will be assigned a unique QR code that is linked to 
+a tamper-evident ledger entry, enabling secure and traceable product verification. Consumers 
+will be able to scan the QR code using a dedicated ve rification module to check the 
+authenticity status of a product. The system is expected to incorporate clone detection to 
+identify suspicious patterns of repeated or abnormal QR code scans. In addition, a product 
+revocation mechanism will be implemented, a llowing manufacturers to invalidate products 
+that are confirmed to be compromised, counterfeit, or recalled. All significant system events, 
+including registration, verification, and revocation actions, will be recorded to maintain 
+transparency and data int egrity. Both manufacturers and consumers will interact with the 
+system through a user -friendly, mobile-first web interface. Finally, an evaluation of the 
+prototype will demonstrate how the application of blockchain principles can enhance product 
+traceability, strengthen authenticity verification, and support counterfeit prevention within a 
+controlled implementation environment.  
+1.9 Project Outline 
+This report consists of six chapters that describe the development of a  blockchain-
+based product authentication system with clone-detection and revocation features. 
+Chapter 1: Introduction  provides an overview of the project, including the 
+background, problem statement, objectives, scope, and overall project description.  
+
+--- PAGE 25 ---
+9 
+Chapter 2: Background Study / Literature Revie w discusses related studies and 
+research on blockchain technology, product authentication systems, and existing methods 
+for counterfeit prevention.  
+Chapter 3: Requirement Analysis and Design present the system requirements and 
+design, including the archit ecture, workflow, and main components such as QR code 
+generation, clone detection, and revocation features. 
+Chapter 4: Implementation  describes the system implementation process, 
+including the development of the prototype, key modules, and integration of s ystem 
+components. 
+Chapter 5: Testing presents the testing activities conducted on the system, including 
+functionality and usability testing. It evaluates the system’s performance, reliability, and 
+overall effectiveness. 
+Chapter 6: Conclusion and Future Work summarize the overall project outcomes, 
+highlights key contributions, discusses limitations, and provides recommendations for future 
+improvements and enhancements. 
+1.10 Summary 
+This chapter has presented the background, problem statement, objectives, and scope 
+of the project, emphasizing the growing issue of counterfeit products across various 
+industries. To address this issue, the project proposes a blockchain -based product 
+authentication system that integrates QR code verific ation, clone detection, and product 
+revocation mechanisms. By applying blockchain principles to create a tamper-evident ledger 
+for recording critical product events, the system aims to strengthen data integrity, enhance 
+
+--- PAGE 26 ---
+10 
+consumer trust, and assist manufacturers in managing product authenticity. The chapter also 
+outlined the brief methodology and expected outcomes, establishing a clear foundation for 
+the system development process discussed in the next chapter.
+
+--- PAGE 27 ---
+11 
+CHAPTER 2  
+ 
+ 
+LITERATURE REVIEW 
+2.1 Introduction  
+This chapter provides an overview of the key concepts and technologies related to 
+the development of a blockchain -based product authentication system. It begins with a 
+discussion on the growing issue of counterfeit products and how they impact consumers and 
+industries. The chapter then explains the fundamentals of blockchain and QR code 
+technology, focusing on how these technologies are used in authentication. By reviewing 
+existing works and identifying their limitations, this chapter highlights the research gap that 
+motivates the proposed system. The chapter concludes with a summary of the main findings.  
+2.2 Overview of Counterfeit Products 
+Counterfeit products have emerged as a significant concern across various industries, 
+including pharmaceuticals, cosmetic s, electronics, and consumer goods. These fake items 
+closely resemble genuine products, making it challenging for consumers to distinguish 
+between authentic and counterfeit goods. Counterfeits create serious safety risk that lead to 
+financial losses and negative impact for consumer trust in brands (Shankar & Jayavadivel, 
+2019). Traditional authentication methods such as QR code, barcodes, holograms, and serial 
+numbers are increasingly proving to be ineffective, as they can be easily copied or 
+manipulated. Counterfeiters frequently duplicate QR codes or reuse legitimate identifiers, 
+allowing counterfeit products to pass basic verification processes. As counterfeiters become 
+more sophisticated, there is an urgent need for more secure, transparent, and resilien t 
+authentication systems to combat this growing threat. 
+
+--- PAGE 28 ---
+12 
+2.3 Blockchain Technology 
+This section reviews blockchain technology, its key characteristics, and its 
+application in product authentication systems. 
+2.3.1 Overview of Blockchain 
+Blockchain is a distributed dig ital ledger technology that records data in blocks 
+linked using cryptographic hashes. Each block contains a timestamp and a reference to the 
+previous block, forming a chain that is resistant to tampering. In general, blockchain systems 
+distribute data acro ss multiple nodes, reducing reliance on a single controlling entity and 
+improving transparency and data integrity. These properties make blockchain suitable for 
+applications requiring trustworthy record -keeping, such as supply chain management and 
+product authentication.  
+ 
+Figure 2.1 Working of Blockchain (Wasnik et at., 2022) 
+ 
+
+
+--- PAGE 29 ---
+13 
+2.3.2 Key Characteristics of Blockchain 
+Blockchain technology has several key characteristics that make it suitable for secure 
+product authentication and counterfeit prevention. These characteristics ensure that product 
+data stored on the blockchain remains protected, trustworthy, and resistant to manipulation. 
+Security is one of the features of blockchain. It uses cryptographic techniques th at 
+protect data stored on the blockchain. Each transaction is digitally signed, and the consensus 
+mechanism ensures that only valid data is added to the chain. This makes unauthorized 
+changes extremely difficult, providing a more secure alternative to cent ralized databases 
+(Wasnik et al., 2022).  
+Decentralization further strengthens system reliability. Instead of relying on a single 
+central server, data is stored across multiple nodes in a distributed network. This eliminates 
+the single point of failure iss ue found in centralized systems and makes it much more 
+difficult for attackers to alter product information (Mallegowda et al., 2022; Wasnik et al., 
+2022).  
+Immutability ensures that once data is recorded on the blockchain, it cannot be edited 
+or deleted without changing the entire chain. Each block is linked to the previous one using 
+cryptographic hashes, creating a structure that is resistant to tampering. This is especially 
+important for product authentication because it guarantees that product records, once added, 
+cannot be modified by counterfeiters (Wasnik et al., 2022).  
+Transparency is another characteristic that enhances trust. Although the data stored 
+on a blockchain can be secured or anonymized, the transactions recorded on the network are 
+
+--- PAGE 30 ---
+14 
+visible to all participants. This transparency allows consumers and manufacturers to verify 
+the authenticity and history of a product at any time (Nagar et al., 2023; Wasnik et al., 2022).  
+Lastly, traceability is a key feature enabled by blockchain technology, a llowing the 
+recording of a product’s movement or status at various stages of the supply chain. Each 
+transaction or update is stored as a permanent, verifiable entry, making it possible to track a 
+product from origin to end -user (Wasnik et al., 2022). This transparency helps prevent 
+tampering, supports authenticity verification, and enhances trust among stakeholders. 
+Although not all blockchain systems fully implement comprehensive traceability features, 
+the ability to maintain an immutable record of a produ ct’s journey remains one of 
+blockchain’s strongest advantages in product authentication and supply chain management.  
+These characteristics collectively make blockchain a strong foundation for building 
+a secure and reliable product authentication system, a ddressing many weaknesses found in 
+traditional verification methods and centralized solutions. 
+2.3.3 Blockchain in Product Authentication 
+Blockchain is increasingly used to store product information securely so that it 
+cannot be changed or deleted. By recording each product’s identity on a blockchain, 
+manufacturers create a permanent, verifiable history. Consumers can confirm authenticity 
+by checking whether the product information scanned from a QR code matches the 
+blockchain record.  
+However, many existing bloc kchain-based systems only focus on tracking product 
+movement or supply chain traceability. They do not address key issues such as detecting 
+cloned QR codes or revoking compromised products, leaving gaps in consumer protection. 
+
+--- PAGE 31 ---
+15 
+2.4 QR Code Technology 
+This section discusses QR code technology, its use in product verification, and its 
+inherent vulnerabilities.  
+2.4.1 Overview of QR Codes 
+QR codes, or Quick Response codes, are two-dimensional matrix barcodes designed 
+to store information that can be quickly retrieved using a smartphone camera or QR scanner. 
+Compared to traditional barcodes, QR codes can store much more data, including product 
+identifiers, URLs, manufacturing details, and batch numbers. Their ability to be scanned 
+easily and read from any angl e makes them popular in retail, logistics, marketing, and 
+product authentication. QR codes have become one of the most practical tools for connecting 
+physical products to digital information because they are inexpensive to generate and require 
+no specialized hardware for scanning (Tiwari et al., 2023). 
+2.4.2 QR Codes in Product Verification 
+QR codes are widely used in product verification systems due to their simplicity and 
+accessibility. When a consumer scans a QR code found on product packaging, the system 
+typically retrieves information such as the product name, batch number, manufacturing date, 
+and authenticity status. QR -based systems help bridge the gap between manufacturers and 
+consumers by allowing instant access to product details through mobile devices. Many 
+industries, including pharmaceuticals, cosmetics, and electronics, use QR codes to support 
+transparency and improve customer trust by offering quick authenticity checks. Studies show 
+that QR-based verification is currently one of the most common  approaches in counterfeit 
+detection systems because it is easy to implement and widely supported by existing devices 
+(Kulkarni et al., 2025; Tiwari et al., 2023). 
+
+--- PAGE 32 ---
+16 
+2.4.3 QR Code Vulnerabilities 
+Despite their advantages, QR codes have notable security limitations. QR c odes are 
+static images with no built-in protection against duplication. Counterfeiters can easily copy 
+a QR code from a genuine product, either by photographing it or reprinting it and place it on 
+fake items. When scanned, the code often leads to the same verification result as the original 
+product, making it difficult for consumers or systems to detect the counterfeit. Most existing 
+QR-based authentication systems only check whether the code exists in a database and do 
+not monitor scan patterns, locations,  or scan frequency, which makes them vulnerable to 
+cloning attacks (Kulkarni et al., 2025; Tiwari et al., 2023). This weakness highlights the need 
+for additional layers of security, such as blockchain integration and clone -detection 
+mechanisms, to ensure reliable product authentication. 
+2.5 Research Gap 
+Despite the advancements in product authentication technologies, several critical 
+gaps remain in current research and implementations. Most existing solutions primarily 
+focus on traceability and basic verification, often overlooking advanced threats such as QR 
+code duplication or cloning. This makes many systems vulnerable to sophisticated 
+counterfeiting techniques, where genuine product codes are simply copied and reused, as 
+highlighted in the work of Shankar and Jayavadivel (2019) and Wasnik et al. (2022).  
+Although blockchain technology provides transparency and tamper-resistance, many 
+blockchain-based authentication models do not incorporate real -time clone detection 
+mechanisms, as noted by Mallegowda et al. (2022) and Nagar et al. (2023). Existing studies 
+also show that once a product is recorded on the blockchain, most systems lack a method to 
+revoke, deactivate, or flag the item if it is later found to be fake, recalled, or compromised 
+
+--- PAGE 33 ---
+17 
+(Tiwari et al., 2023; Nagar et al., 2023). Without a revocation feature, counterfeit products 
+with duplicated QR codes may continue to appear “authentic” during verification, which 
+reduces the reliability of these systems.  
+Furthermore, the study by Kulkarni et al. (2025) demonstrates that while blockchain 
+can enhance product traceability, QR codes used in these systems remain vulnerable because 
+counterfeiters can easily copy and reuse legitimate QR codes. Their blockchain based model 
+does not include clone detection or mechanis ms to invalidate compromised identifiers, 
+indicating that counterfeiting risks persist despite improved traceability.  
+Another challenge is the limited consumer-centered design in current authentication 
+platforms. Many solutions prioritize backend processes, such as ledger updates and product 
+traceability, but provide minimal or unclear feedback to users regarding authenticity, risk 
+levels, or revocation status (Shankar & Jayavadivel, 2019; Wasnik et al., 2022). This leads 
+to poor user confidence and reduces the effectiveness of verification systems in real purchase 
+environments.  
+Addressing these gaps requires a comprehensive solution that not only ensures secure 
+and immutable records through blockchain technology but also incorporates real-time clone 
+detection, dynamic revocation, and a user -friendly interface. A solution like this would  
+greatly increase consumer trust in contemporary supply chains and reinforce product 
+authenticity.        
+2.6 Direction of the Proposed System 
+The proposed system aims to provid e a more secure and user -friendly approach for 
+product authenticity verification by integrating QR code verification with a blockchain -
+
+--- PAGE 34 ---
+18 
+inspired tamper-evident ledger, clone detection, and product revocation mechanisms. The 
+system is designed to address com mon weaknesses found in existing QR code -based and 
+centralized authentication solutions.  
+Conventional QR-based systems are widely adopted due to their simplicity and low 
+cost. However, QR codes are inherently static and easily duplicated. Centralized data bases 
+further introduce risks such as unauthorized modification, single points of failure, and 
+limited auditability. While blockchain technology offers immutability and transparency, 
+many existing blockchain-based authentication systems primarily focus on traceability and 
+do not adequately address QR code cloning or post-registration product revocation.  
+To overcome these limitations, the proposed system incorporates a backend -driven 
+clone detection mechanism that analyzes QR code scan history, including sc an frequency 
+and contextual patterns. This enables the system to identify abnormal usage, such as repeated 
+scans of the same QR code within short time intervals or from geographically inconsistent 
+locations, which may indicate potential counterfeiting. Det ected anomalies are logged and 
+made available to manufacturers for further assessment.  
+In addition, the system provides a controlled product revocation mechanism that 
+allows authorized manufacturers to invalidate products that are recalled, compromised, o r 
+confirmed to be counterfeit. Revocation events are recorded in a tamper -evident ledger to 
+ensure accountability and auditability, while consumers are clearly informed of the current 
+product status during verification.  
+Rather than implementing a fully de centralized blockchain network, the system 
+adopts a blockchain simulation approach to demonstrate immutability and tamper resistance 
+in a lightweight and practical manner suitable for a proof -of-concept prototype. The 
+
+--- PAGE 35 ---
+19 
+verification process is delivered through a mobile-first web interface, ensuring accessibility 
+for consumers without requiring specialized hardware or native applications.  
+Overall, the proposed system seeks to enhance product authentication by combining 
+practical QR code verification with bac kend validation, behavioral analysis, and tamper -
+evident record keeping, thereby improving trust, transparency, and resilience against 
+counterfeiting. 
+2.7 Chapter Summary 
+This chapter reviewed key technologies and approaches used in product 
+authentication, highlighting both the strengths and limitations of existing solutions. While 
+QR codes and blockchain technologies have enhanced verification capabilities, significant 
+gaps remain, particularly in the detection of cloned QR codes and the management of 
+revoked or compromised products. These identified limitations provide the motivation for 
+the proposed system design, which will be discussed in the following chapter. The chapter 
+also outlined the direction of the proposed system, which integrates blockchain princ iples 
+with clone detection and product revocation mechanisms to address these shortcomings.  
+
+--- PAGE 36 ---
+20 
+CHAPTER 3  
+ 
+ 
+REQUIREMENT ANALYSIS AND DESIGN 
+3.1 Introduction 
+This chapter presents the requirement analysis and system design for the proposed 
+product authentication system. The purpose of this chapter is to identify the functional and 
+non-functional requirements of the system and to explain how the system is design ed to 
+fulfill these requirements.  
+The system requirements were derived from multiple sources, including the literature 
+review discussed in Chapter 2 and an analysis of existing product authentication solutions. 
+These requirements are categorized into functional and non -functional requireme nts to 
+clearly define the system’s expected behaviour, performance, and constraints.  
+In addition, this chapter describes the overall system design, including system 
+overview, system architecture, data flow diagram, use case interactions, activity flows, 
+sequence diagrams, and user interface structure. The proposed design emphasizes secure 
+product verification, effective detection of cloned QR codes, and controlled product 
+revocation, while maintaining usability for both manufacturers and consumers. 
+3.2 Requirement Analysis 
+Requirement analysis is an important phase in system development as it defines what 
+the system should do and how it should perform. This section explains how the system 
+requirements were gathered and presents both functional and non -functional requirements 
+for the proposed system. 
+
+--- PAGE 37 ---
+21 
+3.2.1 Source of Requirements 
+The requirements for this project were obtained through several sources:  
+1. Literature Review  
+Existing studies on blockchain -based product authentication, QR code 
+verification, and counterfeit detection were reviewed in Chapter 2. These studies 
+helped identify common system features, limitations, and research gaps, such as 
+the absence of clone detection and revocation mechanisms.  
+2. Analysis of Existing Systems  
+Observations of current QR -based and  centralized authentication systems 
+highlighted weaknesses such as QR code duplication, lack of real -time 
+monitoring, and absence of product revocation features. These weaknesses 
+guided the formulation of system requirements.  
+3. Stakeholder-Oriented Requirement Considerations  
+System requirements were derived from inferred stakeholder needs based on 
+typical product authentication workflows. Manufacturers require the ability to 
+register products, monitor scan activities, detect abnormal usage patterns, and 
+revoke products when necessary due to recalls or counterfeit detection. 
+Consumers require a fast, simple, and trustworthy verification process using a 
+mobile device, which influenced the adoption of a mobile-first web interface and 
+a minimal-interaction verification workflow. Retail and post-purchase scenarios, 
+where legitimate repeated scans may occur, were also considered. These 
+considerations informed the verification workflow, scan logging, clone detection 
+logic, and user feedback mechanisms. 
+
+--- PAGE 38 ---
+22 
+3.2.2 Functional Requirements 
+Functional requirements define the core functions that the system must perform. The 
+functional requirements for the proposed system are as follows:  
+1. The system shall allow manufacturers to register products into the system.  
+2. The system shall generate a unique QR code for each registered product.  
+3. The system shall store product information in a blockchain-based ledger.  
+4. The system shall allow consumers to verify product authenticity by scanning a QR 
+code.  
+5. The system shall record each QR code scan for monitoring purposes.  
+6. The system shall detect possible cloned QR codes based on repeated or abnormal 
+scan activity.  
+7. The system shall allow manufacturers to revoke products that are fake, recalled, or 
+compromised.  
+8. The system shall display verificatio n results to consumers, including authenticity 
+status and revocation warnings. 
+3.2.3 Non-Functional Requirements 
+Non-functional requirements describe the quality attributes and performance 
+expectations of the system.  
+ Performance  
+The system shall return verification results within 2 -3 seconds after a QR 
+code scan under normal operating conditions.  
+ 
+ 
+
+--- PAGE 39 ---
+23 
+ Security  
+Product authentication data shall be protected from unauthorized 
+modification using tamper -resistant properties inspired by  blockchain 
+principles, ensuring the integrity of stored records.  
+ Usability  
+The system interface shall provide a mobile-first web interface that is simple 
+and intuitive for both manufacturers and consumers.  
+ Reliability  
+The system shall operate consiste ntly during repeated QR code scans and 
+verification request, with basic error handling to ensure continued operation 
+when invalid or revoked products are scanned. 
+ Maintainability  
+The system shall be designed using modular architecture, separating core 
+components to facilitate future updates and feature enhancements. 
+3.3 System Design 
+This section describes the design of the proposed QR code -based product 
+authentication system. The system is designed to meet the identified requirements and 
+support secure product verification. It explains how the main components of the system work 
+together to enable QR code scanning, authenticity checking, clone detection, and product 
+revocation using blockchain technology. 
+
+--- PAGE 40 ---
+24 
+3.3.1 System Overview 
+This section provides an overview of the proposed product authentication system and 
+explains how the main components interact to achieve secure product verification. The 
+system is designed to help manufacturers and consumers verify product authenticity using 
+QR codes combined with blockchain technology.  
+The system involves two main user roles, manufacturers and consumers. 
+Manufacturers are responsible for registering products into the system, generating unique 
+QR codes, and managing product status, including revoking products that are recalled o r 
+identified as counterfeit. Consumers interact with the system by scanning QR codes on 
+products to verify their authenticity.  
+When a product is registered, its associated information is recorded in a blockchain-
+based tamper-evident ledger to ensure data integrity and prevent unauthorized modification. 
+Each product is assigned a unique QR code that links to its corresponding backend 
+verification record. During the verification process, the system validates the scanned QR 
+code against stored records and monitors scan behaviour for abnormal patterns.  
+To enhance security, the system incorporates a clone detection mechanism that 
+analyses repeated scans of the same QR code across different locations or timeframes. When 
+suspicious behaviour is detected, the syst em flags the product for further investigation. In 
+addition, a revocation mechanism allows manufacturers to deactivate compromised 
+products, ensuring that consumers receive accurate and up-to-date verification results. 
+
+--- PAGE 41 ---
+25 
+Overall, the proposed system aims to provide a secure, transparent, and user-friendly 
+solution for product authentication, addressing key weaknesses in existing QR -based and 
+centralized verification systems. 
+3.3.2 System Architecture 
+The overall system architecture of the proposed product authentication system is 
+shown in Figure 3.1.  
+ 
+Figure 3.1 System Architecture of the Product Authentication System 
+ 
+Figure 3.1 illustrates the system architecture, which follows a layered design 
+consisting of the client, application, and data layers. Consumers interact with the system 
+through a mobile -first web application to verify products by scanning QR codes, while 
+manufacturers use an administrativ e dashboard to register products, revoke product status, 
+and review system alerts. All requests are processed by the backend application layer, where 
+authentication, QR integrity validation, clone detection, and ledger management are handled 
+by dedicated m odules. Operational data is stored in a relational database, while critical 
+
+
+--- PAGE 42 ---
+26 
+events such as product registration, verification, and revocation are recorded in a tamper -
+evident ledger to ensure data integrity and auditability. 
+3.3.3 Data Flow Diagram (Level 0) 
+Figure 3.2 illustrates the Level 0 Data Flow Diagram of the Product Authentication 
+System, providing a high -level view of the system boundary and its interactions with 
+external entities. The diagram shows how consumers and manufacturers exchange data with 
+the system for product verification, registration, and revocation, while internal data stores 
+support scan logging, risk classification, and auditability. 
+ 
+Figure 3.2 Data Flow Diagram (Level 0) of the Product Authentication System 
+ 
+3.3.4 Entity Relationship Diagram (ERD) 
+Figure 3.3 illustrates the core data structures supporting the proposed product 
+authentication system. Manufacturers register products, each of which is assigned a unique 
+QR code. Scan events are rec orded to support verification and clone detection. The ledger 
+structure is used to store tamper -evident records of product registration, scan activity, and 
+revocation events, ensuring auditability and data integrity across the system.  
+
+
+--- PAGE 43 ---
+27 
+ 
+Figure 3.3 Entity Relationship Diagram (ERD) for Product Authentication System 
+ 
+3.3.5 Use Case Diagram 
+The system involves two primary actors, the Manufacturer and the Consumer. 
+Figure 3.4 illustrates the main interaction between users and the system. 
+
+
+--- PAGE 44 ---
+28 
+ 
+Figure 3.4 Use Case Diagram of the Product Authentication System 
+ 
+Manufacturers Use Case Descriptions 
+The Manufacturer is responsible for managing product information and maintaining 
+product authenticity within the system. 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+--- PAGE 45 ---
+29 
+Table 3.1  Use Case for Register Product 
+Use Case ID UC-01  
+Use Case Name Register Product 
+Actor  Manufacturer 
+Description  Allows the manufacturer to enter product details into the system. 
+Upon successful submission, the product information is recorded as 
+an immutable event in the tamper-evident ledger. 
+Pre-Condition The manufacturer is logged into the system dashboard. 
+Post-Condition Product is registered and ready for QR code generation. 
+Includes UC-02: Generate QR Code 
+ 
+Table 3.2 Use Case for Generate QR Code 
+Use Case ID UC-02  
+Use Case Name Generate QR Code 
+Actor  Manufacturer 
+Description  The system generates a unique QR code linked to the registered 
+product’s ledger record. 
+Pre-Condition The system has successfully validated the registration data from 
+UC-01. 
+Post-Condition QR code is issued and stored in the database. 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 46 ---
+30 
+Table 3.3 Use Case for Revoke Product 
+Use Case ID UC-03  
+Use Case Name Revoke Product 
+Actor  Manufacturer 
+Description  Enables the manufacturer to deactivate or recall products that are 
+confirmed to be counterfeit or compromised. 
+Pre-Condition The product exists in the system and is currently marked as 
+"Active". 
+Post-Condition Revocation event is recorded in the tamper -evident ledger and 
+product status is updated. 
+ 
+Table 3.4 Use Case for View Product Status 
+Use Case ID UC-04  
+Use Case Name View Product Status 
+Actor  Manufacturer 
+Description  Allows the manufacturer to view the current status of registered 
+products to see which items are active, pending, or revoked. 
+Pre-Condition The manufacturer has registered products in the system. 
+Post-Condition The manufacturer identifies the current operational state of specific 
+product units or batches. 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 47 ---
+31 
+Table 3.5 Use Case for View Scan Logs 
+Use Case ID UC-05  
+Use Case Name View Scan Logs 
+Actor  Manufacturer 
+Description  Allows the manufacturer to monitor scan activities, including 
+timestamps and locations, to id entify unusual patterns that may 
+indicate QR code cloning. 
+Pre-Condition Consumers have scanned the products, and data has been recorded 
+in the database layer 
+Post-Condition The manufacturer gains insights into potential security threats or 
+unauthorized duplications. 
+ 
+Consumer Use Case Descriptions 
+The Consumer interacts with the system mainly for product verification purposes. 
+Table 3.6 Use Case for Scan QR Code 
+Use Case ID UC-06  
+Use Case Name Scan QR Code 
+Actor  Consumer 
+Description  The primary interaction where a consumer scans a product's QR 
+code to begin the verification process. 
+Pre-Condition The consumer has access to the web-based verification interface. 
+Post-Condition The system initiates the verification logic (UC-07). 
+Includes UC-07: Verify Product Authenticity 
+ 
+ 
+
+--- PAGE 48 ---
+32 
+Table 3.7 Use Case for Verify Product Authenticity 
+Use Case ID UC-07  
+Use Case Name Verify Product Authenticity 
+Actor  Consumer (triggered by system) 
+Description  The system validates the product by checking the tamper -evident 
+ledger and scan history. 
+Pre-Condition A QR code has been scanned (UC-06). 
+Post-Condition Authenticity status and product information are displayed to th e 
+consumer. 
+Includes UC-08: Check Revocation Status 
+ 
+Table 3.8 Use Case for Check Revocation Status 
+Use Case ID UC-08  
+Use Case Name Check Revocation Status 
+Actor  System / Tamper-Evident Ledger 
+Description  An internal system operation that determines whether the product 
+has been revoked by the manufacturer. 
+Pre-Condition The product ID has been successfully located in the ledger records. 
+Post-Condition The system identifies if the item is "Revoked" or "Active." 
+ 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 49 ---
+33 
+Table 3.9 Use Case for View Product Information 
+Use Case ID UC-09  
+Use Case Name View Product Information 
+Actor  Consumer 
+Description  After verification, the consumer views details like product name, 
+manufacturer, and status. 
+Pre-Condition UC-07 (Verification) and UC -08 (Revocation Check) are 
+completed. 
+Post-Condition Consumer is informed about the specific details and origin of the 
+product. 
+ 
+Table 3.10 Use Case for Receive Revocation Alert 
+Use Case ID UC-10  
+Use Case Name Receive Revocation Alert 
+Actor  Consumer 
+Description  If a product has been marked as invalid by the manufacturer, the 
+consumer receives a warning alert. 
+Pre-Condition Verification logic identifies a "Revoked" flag on the ledger record. 
+Post-Condition Warning message is displayed to the consumer. 
+ 
+3.3.6 Activity Diagram 
+Figure 3.5 illustrates the systematic logic of the product verification workflow, 
+mapping the transition from the initial QR code scan to the final status display for the 
+consumer.  
+
+--- PAGE 50 ---
+34 
+ 
+Figure 3.5 Activity Diagram of the Consumer Product Verification Process 
+ 
+The verification process is initiated when a consumer scans the product’s QR code. 
+The system forwards the scanned data to the backend, which cross -references the 
+information against the tamper-evident ledger to confirm that the product has been properly 
+
+
+--- PAGE 51 ---
+35 
+registered. If no corresponding record is found, the product is immediately flagged as 
+invalid.  
+For registered products, the system performs additional validation by analysing scan 
+history to identify potential QR code cloning and by checking the current revocation status 
+recorded in the ledger. The process concludes by returning a clear verification result to the 
+consumer, indicating whether the product is authentic, suspicious, or revoked. 
+3.3.7 Sequence Diagram 
+Sequence diagrams provide a visual representation of the interactions between 
+system components over time, illustrating the order of operations and message flows during 
+key processes. These diagrams are essential for understanding the dynamic behaviour of the 
+proposed product authentication system. The following sections detail the primary sequence 
+diagrams that demonstrate the system's core functionality.  
+Figure 3.6 illustrates the workflow for registering new products in the authentication 
+system. The process begins at the Manufacturer Dashboard, where essential product details 
+such as product name and batch number are submitted. The backend system coordinates the 
+registration workflow by validating the input data and recording the registration event  in a 
+tamper-evident ledger. Once the ledger entry is successfully created, a unique QR code is 
+generated and associated with the registered product. The product identifier and QR code 
+reference are then stored in the relational database to support efficie nt retrieval and 
+verification operations. This completes the product registration process while maintaining 
+traceability and resistance to unauthorized modification.  
+
+--- PAGE 52 ---
+36 
+ 
+Figure 3.6 Sequence Diagram for Product Registration 
+ 
+Figure 3.7 illustrates the chronological communication between system components 
+during a product verification request. The process is initiated when a consumer scans a QR 
+code, which is transmitted from the user interface to the backend sys tem. The backend 
+performs a multi-stage verification process by first retrieving the product’s registration and 
+revocation status from the tamper-evident ledger. Subsequently, the backend executes a local 
+analyzeScanHistory() function to evaluate scan patt erns and identify potential clone risk 
+based on heuristic analysis. Finally, the verification outcome is returned to the user interface, 
+where the consumer is informed of the product’s authenticity status or potential risk 
+indication. 
+
+
+--- PAGE 53 ---
+37 
+ 
+Figure 3.7 Sequence Diagram for Product Verification 
+ 
+Figure 3.8 shows the process for administratively invalidating a product, such as for 
+stolen goods or recalled batches. The process begins when the manufacturer identifies a 
+product identifier and submits a revocation request through the administrative dashboard. 
+The backend system processes this request by recording the revocation event in the tamper-
+evident ledger. In parallel, the backend updates the product’s status in the relational database 
+to ensure consistency across system components. This approach ensures that both the 
+manufacturer dashboard and the consumer verification interface immediately reflect the 
+revoked status of the product. 
+
+
+--- PAGE 54 ---
+38 
+ 
+Figure 3.8 Sequence Diagram for Product Revocation 
+ 
+3.3.8 Tamper-Evident Ledger Design 
+The system incorporates a tamper -evident ledger to record critical product -related 
+events in an immutable and auditable manner. Rather than functioning as a fully 
+decentralized blockchain network, the ledger applies core blockchain principles such as 
+cryptographic hash chaining and append -only data structures to ensure data integrity and 
+traceability.  
+Each ledger entry represents a significant system event, including product 
+registration, QR code verification, and product revocation. These events are recor ded as 
+sequential ledger blocks, forming a hash-linked chain that preserves the integrity of historical 
+records. Any unauthorized modification to a stored block would break the hash linkage, 
+making tampering immediately detectable. 
+Ledger Block Structure 
+Each ledger block contains a minimal set of metadata required to ensure immutability 
+and integrity of recorded events. The block stores essential information such as hash values, 
+references to previous blocks, and event data. Instead of storing full product or scan details, 
+
+
+--- PAGE 55 ---
+39 
+the system uses a structured payload containing reference identifiers, ensuring efficient 
+storage while maintaining traceability. 
+Table 3.11 Ledger Block Structure 
+Field Name Description 
+block_height Position of the block within the chain 
+hash Hash of the current block 
+previous_hash Hash of the previous block to ensure chaining 
+recalculated_hash Recomputed hash used for validation 
+data_payload Contains event type and reference ID  
+(REGISTER, VERIFY, REVOKE) 
+block_valid Indicates whether the block is valid after verification 
+timestamp Date and time when the block was created 
+ 
+Hashing Mechanism 
+The integrity of each ledger block is maintained using the SHA -256 cryptographic 
+hash function. The block hash (hash) is computed by hashing a concatenation of key fields, 
+including the previous_hash, timestamp, and data_payload. This ensures that each block is 
+uniquely bound to its predecessor, and any modification to a block will result i n a hash 
+mismatch, thereby invalidating all subsequent blocks in the chain. 
+To support integrity verification, the system recalculates the hash 
+(recalculated_hash) during validation and compares it with the stored hash value. Any 
+inconsistency indicates po tential tampering. The first block in the ledger, known as 
+the genesis block, uses a predefined value for the previous_hash field to initialise the chain. 
+Ledger Operation and Integration 
+All interactions with the tamper-evident ledger are managed by the backend system. 
+When a relevant event occurs, such as product registration, verification, or revocation, the 
+
+--- PAGE 56 ---
+40 
+backend generates a new ledger block, computes its hash, and appends it to the existing 
+chain. Once recorded, ledger entries are immutable and cannot be altered or removed without 
+compromising the integrity of the entire chain. 
+The ledger operates alongside the relational database, with each component serving 
+a distinct role. The database supports operational queries and user interactions, while the 
+ledger maintains an immutable audit trail of critical events. The event details are stored in a 
+structured data_payload, which contains reference identifiers rather than full data records. 
+This separation enhances system efficiency while ensuring traceabili ty, transparency, and 
+reliable product verification. 
+3.3.9 QR Code Security Design and Threat Assumptions 
+The QR security design aims to prevent trivial forgery or manipulation while 
+operating under realistic attacker capabilities in a consumer-facing environment. Rather than 
+relying on secrecy of the QR code itself, the design enforces authenticity and integrity 
+through backend verification and cryptographic validation. This approach balances 
+cryptographic protection with practical deployment constraints, acknow ledging that QR 
+codes are publicly visible once products enter the market.  
+QR Code Content Design 
+Each QR code encodes a cryptographically protected verification payload rather than 
+raw product information. The payload consists of a randomly generated, non -sequential 
+qr_id, an optional issuance timestamp, and a cryptographic integrity token. No plainte xt 
+product details or sequential identifiers are stored directly in the QR code in order to prevent 
+information leakage and identifier enumeration.  
+
+--- PAGE 57 ---
+41 
+The integrity token is generated using a hash -based message authentication code 
+(HMAC) computed by the backend system with a server-side secret key. Upon scanning, the 
+backend recomputes the HMAC over the received payload and validates it before any 
+verification logic is executed. Any modification to the QR content invalidates the integrity  
+check, ensuring that attackers cannot forge or alter QR data without access to the secret key.  
+If a URL is used within the QR code, it functions solely as a transport mechanism to 
+deliver the encoded payload to the verification service. Trust decisions are not based on the 
+URL itself but are determined exclusively through backend cryptographic validation and 
+database checks. 
+Backend Protection and Enumeration Resistance 
+All QR scan requests are processed by the backend verification service and validated 
+against registered records in the QR_Code table. Requests containing unknown, malformed, 
+or invalid payloads are rejected and logged for monitoring and analysis. Manufacturer and 
+administrative operations, including product registration, QR issuance, and revocation, are 
+restricted to authenticated users through the management dashboard, ensuring that only 
+authorized entities can perform sensitive actions. 
+Threat Assumptions 
+The system is designed under the following realistic attacker assumptions:  
+ An attacker can physically copy and reprint valid QR codes onto counterfeit 
+products.  
+ An attacker can collect or scrape QR codes from legitimate products.  
+ An attacker can replay scan requests to the verification backend.  
+
+--- PAGE 58 ---
+42 
+ An attacker may attempt to tamper with stored records or product status. 
+The system assumes that attackers cannot access backend secret keys, bypass authenticated 
+manufacturer controls, or modify ledger records without detection. 
+Security Scope and Limitations 
+While cryptographic protect ions prevent QR code tampering and unauthorized 
+backend manipulation, they cannot prevent the physical duplication of a valid QR code. 
+Consequently, QR security is intentionally combined with scan history analysis and 
+revocation logic. This layered approac h enables cloned QR codes to be identified through 
+anomalous usage patterns and invalidated through administrative intervention when 
+necessary. 
+3.3.10 Clone Detection Design 
+The clone detection mechanism is designed to identify abnormal QR code usage 
+patterns tha t may indicate unauthorized duplication of authentic product identifiers. The 
+mechanism does not aim to conclusively identify counterfeit products, but rather to provide 
+early risk indicators that support manufacturer monitoring and decision-making. Rather than 
+attempting to provide definitive proof of counterfeiting, the system performs rule-based scan 
+analysis to assess the likelihood of suspicious behaviour based on historical scan data. This 
+approach acknowledges the presence of legitimate repeated scan s while providing 
+manufacturers with actionable indicators for further investigation.  
+Each QR code scan is processed as part of the product verification workflow. Upon 
+receiving a verification request, the backend system first retrieves the product’s curr ent 
+status from the tamper -evident ledger to determine whether the item is valid or revoked.  
+
+--- PAGE 59 ---
+43 
+During this verification process, the scan event is recorded in the Scan_Log table before 
+clone risk analysis is performed. Logged metadata includes the scan times tamp, an 
+approximate geographic location derived from IP geolocation, and basic device information. 
+These records collectively form the historical dataset used for behavioural analysis. 
+Detection Criteria 
+Clone detection is evaluated using configurable thr esholds applied within a rolling 
+time window. A QR code is flagged as suspicious when one or more of the following 
+conditions are satisfied:  
+ The same QR code is scanned more than N times within a defined time 
+window T.  
+ Consecutive scans originate from geographically distant locations, as inferred 
+from IP geolocation, within an unrealistically short time interval Δt, 
+exceeding a distance threshold D.  
+ The overall scan frequency exceeds expected consumer behaviour for a single 
+product unit over an extended period.  
+Threshold values are selected to balance detection sensitivity while minimising false 
+positives caused by legitimate behaviour, such as in -store verification, post -purchase 
+rescans, retailer inventory checks, or product resale. 
+Risk Classification 
+Based on the analysis results, the system assigns a risk level to each QR code:  
+ Low Risk: Scan behaviour is consistent with normal usage patterns.  
+ Medium Risk: Unusual scan frequency or location variance is detected.  
+
+--- PAGE 60 ---
+44 
+ High Risk: Strong indicators of potential QR code duplication are present.  
+Risk assessments are stored in the Clone_Risk table and are intended to support 
+manufacturer monitoring and investigative decision -making rather than enforce automatic 
+blocking of consumer access. 
+System Behaviour 
+When a QR code is flagged with a Medium or High risk level, the following actions occur:  
+ A warning indicator is displayed on the manufacturer dashboard.  
+ Scan history details are made available for further review.  
+ Consumers continue to receive verification results, accompanied by an 
+advisory message in high-risk cases.  
+Importantly, clone detection does not override revocation logic. If a product has been 
+administratively revoked, the revocation status takes precedence re gardless of scan 
+behaviour. 
+Handling Legitimate Repeated Scans 
+The system explicitly accounts for legitimate repeated scans, including in -store 
+verification, post-purchase rescans, retailer inventory checks, and resale scenarios. For this 
+reason, clone det ection does not automatically invalidate products, but instead assigns a 
+graduated risk level to guide manufacturer review and investigation. 
+ 
+ 
+ 
+
+--- PAGE 61 ---
+45 
+Location Source and Reliability 
+Scan location data is derived using approximate IP -based geolocation, which 
+provides coarse -grained geographic information rather than precise GPS coordinates. 
+Location is therefore used as a contextual indicator rather than a definitive proof of misuse. 
+Threshold and Time Window Assumptions 
+A QR code is flagged as suspicious when it exceeds predefined behavioural 
+thresholds, such as more than three scans within a ten -minute window, or scans originating 
+from geographically distant locations (e.g., >50 km) within an unrealistically short time 
+interval. These thresholds are configurable and selected to balance detection sensitivity 
+while minimizing false positives.  
+Evaluation Approach 
+Clone detection effectiveness is evaluated through simulated scan scenarios, 
+including normal consumer behaviour , repeated legitimate scans, and intentional QR code 
+reuse, allowing qualitative assessment of false-positive and detection tendencies. 
+Pseudocode for Clone Detection Logic 
+function analyzeScanHistory(scans): 
+    sort scans by scan_time 
+    for each consecutive pair of scans: 
+        scan1 = previous scan 
+        scan2 = current scan 
+        if scan1.location is missing or scan2.location is missing: 
+            continue 
+        distance = calculateDistance(scan1.location, scan2.location) 
+
+--- PAGE 62 ---
+46 
+        time_difference = calculateTimeDifference(scan1.time, scan2.time) 
+        if distance > D and time_difference < Δt: 
+            return HIGH_RISK 
+    return LOW_RISK 
+ 
+3.3.11 Revocation Mechanism Design 
+The revocation mechanism enables manufacturers to administratively invalidate 
+registered products that are identified as counterfeit, recalled, or compromised. This 
+mechanism ensures that once a product is revoked, its status is consistently enforced acros s 
+the system and is immediately visible to both manufacturers and consumers.  
+Revocation is treated as a state transition event rather than a data deletion operation. 
+This approach preserves historical records while ensuring that invalid products can no longer 
+be verified as authentic. Revocation is treated as a permanent and irreversible state transition 
+within the system to preserve audit integrity and prevent abuse. Once revoked, a product 
+cannot return to an active state, and any correction requires a n ew product registration and 
+QR code issuance. 
+Consumer-Side Behaviour  
+When a consumer scans a QR code associated with a revoked product:  
+ The system detects the revoked status during verification  
+ A high-priority alert is displayed to the consumer  
+ The product is explicitly marked as Revoked or Invalid  
+Revoked items cannot return an Authentic status under any circumstances.  
+
+--- PAGE 63 ---
+47 
+Revocation Policy  
+To maintain system integrity and auditability:  
+ Revocation is irreversible within the system  
+ Any correction requires a new product registration with a new QR code  
+ All revocation events remain permanently recorded in the ledger  
+This policy prevents abuse and ensures that revocation decisions are transparent and 
+accountable.  
+Pseudocode for Revocation Logic 
+function revokeProduct(product_id, reason): 
+    product = getProduct(product_id) 
+    if product does not exist: 
+        return "Product not found" 
+    if product.status != "active": 
+        return "Invalid revocation request" 
+    begin transaction 
+update product 
+        set status = "revoked", 
+            revoke_reason = reason, 
+            updated_at = current_timestamp 
+        where product_id = product_id 
+    update qr_code 
+        set is_active = false 
+        where product_id = product_id 
+
+--- PAGE 64 ---
+48 
+    appendLedgerBlock( 
+        data_type = "REVOKE", 
+        data_reference_id = product_id 
+    ) 
+    commit transaction 
+    return "Product revoked successfully" 
+ 
+3.3.12 API Design and Endpoints 
+The system implements a RESTful API to enable secure interaction between client 
+applications and backend services. The API is logically divided into consumer -facing 
+verification endpoints and manufacturer administrative endpoints to enforce role -based 
+access control. Consumer endpoints are restricted to QR code verifica tion and return the 
+product verification status together with advisory clone -risk indicators. Manufacturer 
+endpoints support product lifecycle management, including product registration, revocation, 
+and monitoring of scan activity. All requests are processed by the backend application layer, 
+where token integrity validation, scan logging, clone -risk analysis, and ledger updates are 
+performed. Direct access to the tamper-evident ledger is restricted to backend services only, 
+ensuring controlled and auditable state changes. This API design supports modular system 
+development while remaining suitable for prototype-level implementation. 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 65 ---
+49 
+Core API Endpoints  
+Table 3.12 List of API Core Endpoints 
+Category Endpoint Method Description 
+Consumer /verify POST Verifies a scanned QR code token and 
+returns the product authenticity status 
+together with clone risk indication. 
+Consumer /scan/log POST Records scan metadata such as 
+timestamp and approximate location for 
+behavioural and clone detection 
+analysis. 
+Manufacturer /auth/login POST Authenticates manufacturer users and 
+grants access to administrative 
+functions. 
+Manufacturer /product/register POST Registers a new product and generates a 
+unique QR code identifier linked to the 
+ledger. 
+Manufacturer /product/revoke POST Revokes a registered product due to 
+recall, compromise, or counterfeit 
+confirmation. 
+Manufacturer /product/status GET Retrieves the current verification and 
+revocation status of a product. 
+Manufacturer /analytics/scans GET Displays scan history and clone risk 
+indicators for monitoring and 
+investigation. 
+Internal 
+Backend 
+/ledger/append POST Appends immutable verification and 
+lifecycle events to the tamper ‑evident 
+ledger. 
+Internal 
+Backend 
+/clone/analyze POST Performs rule ‑based clone detection 
+analysis using historical scan data. 
+
+--- PAGE 66 ---
+50 
+3.3.13 User Interface Design 
+Figure 3.9 shows the manufacturer’s dashboard interface with a centralized overview 
+of the system. The dashboard displays real -time analytic s, including the total number of 
+registered products and active scan activities. It serves as the primary control centre for 
+manufacturers to register products, generate unique QR codes linked to ledger records, and 
+manage product lifecycles through the re vocation module. This interface supports efficient 
+monitoring and administrative control while ensuring consistency with the system’s tamper-
+evident ledger design. 
+ 
+Figure 3.9 Manufacturer Administrative Dashboard Interface 
+ 
+Figure 3.10 illustrates a dashboard for manufacturers to monitor products in real 
+time. It highlights key performance indicators, provides insights into product lifecycles, and 
+shows concise status summaries of active, pending, and revoke d products recorded in the 
+
+
+--- PAGE 67 ---
+51 
+tamper-evident ledger. This enables administrators to manage supply chain integrity, track 
+top-performing products, and address potential security threats.  
+ 
+Figure 3.10 Manufacturer Analytics Dashboard Interface 
+ 
+Figure 3.11 shows the revocation history interface. This interface allows 
+manufacturers to track and manage all invalidated product records. It provides a quick 
+overview of total revocations, affected units, and action status, while a detailed list shows 
+individual entries with identifiers, severity, and technical notes. This interface enhances 
+transparency and accountability by ensuring that all revocation events are consistently 
+recorded and traceable through th e tamper -evident ledger, thereby supporting system 
+integrity and auditability. 
+
+
+--- PAGE 68 ---
+52 
+ 
+Figure 3.11 Manufacturer Revocation History Interface 
+ 
+Figure 3.12 shows the QR code scanning interface used by consumers during the 
+verification process. The interface is designed for ease of use, featuring a high -contrast 
+viewfinder and real-time camera feedback to ensure accurate scanning. This module serve s 
+as the entry point to the consumer verification workflow, capturing the encrypted QR data 
+and transmitting it to the backend system for validation against the tamper-evident ledger.  
+
+
+--- PAGE 69 ---
+53 
+ 
+Figure 3.12 Consumer Scanning Module 
+ 
+Figure 3.13 is displayed when a product passes all three security tiers, which are 
+identity validation, clone detection, and revocation status check. The prominent use of green 
+colour coding and a checkmark icon provides immediate visual c onfirmation to the 
+consumer that the product is genuine and safe for use.  
+
+
+--- PAGE 70 ---
+54 
+ 
+Figure 3.13 Verification Result (Authentic Result) 
+ 
+Figure 3.14 is triggered when the system detects a "Replay Attack" through scan  
+history analysis. The yellow warning theme alerts the consumer that the specific QR code 
+has been scanned in multiple locations or across an unrealistic timeframe, indicating that the 
+code may have been duplicated by a counterfeiter. 
+
+
+--- PAGE 71 ---
+55 
+ 
+Figure 3.14 Verification Result (Suspicious/Cloned Warning) 
+ 
+Figure 3.15 is used to display high-priority alerts during the verification process. This 
+screen is shown when a product has been officially revoked by the manufacturer or when the 
+scanned QR code does not exist in the tamper -evident ledger. The interface clearly warns 
+the consumer of the potential risk and provides guidance to avoid using the product and to 
+report the issue if necessary. 
+
+
+--- PAGE 72 ---
+56 
+ 
+Figure 3.15 Verification Result (Revoked or Invalid Status) 
+ 
+3.4 Summary  
+This chapter presented the requirement analysis and system design for the proposed 
+product authentication system. The functional and non -functional requirem ents were 
+identified based on literature review and observed limitations of existing solutions. These 
+requirements define the expected behaviour, performance, and security aspects of the 
+system.  
+
+
+--- PAGE 73 ---
+57 
+The chapter also outlined the system design, including the o verall system 
+architecture, Level 0 data flow diagram, use case interactions, activity flow, sequence of 
+operations, and user interface design. These design elements provide a clear understanding 
+of how users interact with the system and how product verifi cation, clone detection, and 
+revocation processes are carried out. The information in this chapter serves as a foundation 
+for the system implementation, which will be discussed in the next chapter. 
+ 
+
+--- PAGE 74 ---
+58 
+CHAPTER 4  
+ 
+ 
+IMPLEMENTATION 
+4.1 Introduction 
+This chapter presents the implementation of the proposed product authentication 
+system. The system was developed based on the design outlined in Chapter 3 and integrates 
+a backend server, a PostgreSQL database, and a web -based user interface for both 
+manufacturers and consumers. The purpose of this chapter is to explain how the proposed 
+design was translated into a functional prototype and to describe how the implemented 
+modules operate cohesively in practice.  
+The completed prototype supports product regis tration, QR code generation, QR 
+payload protection, product verification, scan logging, clone risk detection, product 
+revocation, and tamper-evident ledger recording. The implementation focuses on delivering 
+an end-to-end proof of concept within a controll ed environment. This chapter also outlines 
+the system requirements, development setup, implementation details, and the overall 
+workflow of the completed system. 
+4.2 System Requirements 
+4.2.1 Hardware Requirement 
+The system was developed and tested using a laptop equipped with an AMD Ryzen 
+5 processor with Radeon Graphics and 16 GB of RAM. This hardware configuration 
+provided sufficient computational capability and memory to support local development, 
+backend execution, database management, and browser-based testing.  
+
+--- PAGE 75 ---
+59 
+The processor handled server -side request processing, QR code generation, hash 
+computation, and ledger -related operations, while the available memory supported 
+multitasking activities such as running t he code editor, database tools, local server, and 
+browser simultaneously without significant performance degradation. Adequate storage 
+space was also required to install software tools, project dependencies, and database files.  
+An internet connection was required during development for downloading 
+dependencies, accessing technical documentation, and supporting certain testing activities 
+such as IP -based geolocation lookup. Overall, the hardware used was sufficient to support 
+stable development and testing of the prototype in a controlled environment.  
+4.2.2 Software Requirements 
+The system was developed on the Windows operating system. The backend was 
+implemented using Node.js and the Express framework, which were used to provide server-
+side logic, REST-style API routing, QR payload validation, clone detection logic, revocation 
+handling, and ledger integration.  
+PostgreSQL was used as the relational database management system to store 
+structured data such as product records, QR identifiers, scan logs, clone risk a ssessments, 
+and ledger blocks. Database interaction was handled through the pg library. The frontend 
+was implemented using HTML, CSS, and JavaScript to create a web -based dashboard and 
+consumer-facing verification interface. Frontend -backend communication was performed 
+using the Fetch API.  
+Several development tools were used throughout the implementation process. Visual 
+Studio Code was used as the primary source code editor, pgAdmin was used for database 
+
+--- PAGE 76 ---
+60 
+administration, and Postman was used for API testing . Additional supporting packages 
+included dotenv for environment configuration, qrcode for QR image generation, and cors 
+for handling cross-origin requests during testing.  
+4.3 System Development 
+4.3.1 Installation and Configuration 
+The development environment was prepared by installing Node.js, PostgreSQL, and 
+the required development tools. After the project structure was created, the necessary 
+dependencies were installed using npm. These dependencies included Express for backend 
+routing, pg for PostgreSQL connectivity, dotenv for environment variable management, and 
+qrcode for QR code generation.  
+System configuration was managed through an environment file (.env) to improve 
+maintainability and reduce hardcoded values in the source code. Important configuration 
+values included the public verification URL, database connection settings, HMAC secret 
+key for QR security, and threshold values for clone detection. This approach made the 
+implementation easier to manage and allowed sensitive values to be kept separate from the 
+main application logic.  
+After configuration was completed, the Express server was connected to the 
+PostgreSQL database and tested locally. Once the backend routes were functioning correctly, 
+the frontend pages were integrated with the backend API to s upport full system interaction 
+through the browser. 
+
+--- PAGE 77 ---
+61 
+4.4 System Implementation 
+4.4.1 Backend Implementation 
+The backend system was implemented using Node.js and Express following a REST-
+style API structure. It handles the main operations of the authentication workflow, including 
+product registration, QR generation, signed payload verification, scan logging, clone risk 
+evaluation, revocation processing, analytics retrieval, and ledger block creation.  
+During product registration, the backend receives product details fr om the 
+manufacturer dashboard, inserts the product into the database, generates a unique non -
+sequential QR identifier, constructs a signed verification payload, and returns a QR 
+verification URL together with a generated QR image. A corresponding ledger block is also 
+appended to record the registration event.  
+router.post("/product/register", async (req, res) => { 
+  const { name, manufacturer_id, serial_number } = req.body; 
+  const client = await pool.connect(); 
+  try { 
+    await client.query("BEGIN"); 
+    const productResult = await client.query( 
+      `INSERT INTO product (manufacturer_id, product_name, 
+serial_number) 
+       VALUES ($1, $2, $3) RETURNING *`, 
+      [manufacturer_id, name, serial_number] 
+    ); 
+    const product = productResult.rows[0]; 
+    const qr_value = crypto.randomUUID(); 
+
+--- PAGE 78 ---
+62 
+    await client.query( 
+      `INSERT INTO qr_code (product_id, qr_value) 
+       VALUES ($1, $2)`, 
+      [product.product_id, qr_value] 
+    ); 
+    await insertLedger("REGISTER", product.product_id, 
+client); 
+    const baseUrl = buildPublicBaseUrl(req); 
+    const { payload, qrUrl } = buildVerificationUrl(baseUrl, 
+qr_value); 
+    const qrImage = await QRCode.toDataURL(qrUrl); 
+    await client.query("COMMIT"); 
+    res.json({ 
+      message: "Product registered", 
+      qr_value, 
+      qr_payload: payload, 
+      qr_url: qrUrl, 
+      qr_image: qrImage 
+    }); 
+  } catch (err) { 
+    await client.query("ROLLBACK"); 
+    console.error("ERROR:", err); 
+    res.status(500).json({ error: "Server error" }); 
+  } finally { 
+    client.release(); 
+  } 
+}); 
+Figure 4.1 Code Snippet for Product Registration Route 
+ 
+
+--- PAGE 79 ---
+63 
+This route shows how the backend handles product registration by combining 
+database insertion, QR identifier creation, signed payload generation, and ledger recording 
+into a single workflow. This ensures that a newly registered product is immediately linke d 
+to a verifiable QR code and an auditable event record.  
+The backend also processes verification and revocation requests. During verification, 
+the backend validates the signed QR payload before any database lookup is performed. If 
+valid, the system retrieves the associated product, stores the scan metadata, evaluates clone 
+risk, checks whether the product has been revoked, and returns the correct verification status. 
+Revocation is handled through a dedicated route that changes the product status, disables the 
+QR code, and appends a revocation event to the ledger.  
+router.post("/product/revoke", async (req, res) => { 
+  const { product_id, reason } = req.body; 
+  const client = await pool.connect(); 
+  try { 
+    await client.query("BEGIN"); 
+    const productResult = await client.query( 
+      `SELECT product_status FROM product WHERE product_id 
+= $1`, 
+      [product_id] 
+    ); 
+    if (productResult.rows.length === 0) { 
+      await client.query("ROLLBACK"); 
+      return res.status(404).json({ error: "Product not 
+found" }); 
+    } 
+     
+
+--- PAGE 80 ---
+64 
+if (productResult.rows[0].product_status !== "active") { 
+      await client.query("ROLLBACK"); 
+      return res.status(400).json({ 
+        error: "Invalid revocation request. Only active 
+products can be revoked." 
+      }); 
+    } 
+    await client.query( 
+      `UPDATE product 
+       SET product_status = 'revoked', 
+           revoke_reason = $2, 
+           updated_at = NOW() 
+       WHERE product_id = $1`, 
+      [product_id, reason] 
+    ); 
+    await client.query( 
+      `UPDATE qr_code 
+       SET is_active = false 
+       WHERE product_id = $1`, 
+      [product_id] 
+    ); 
+    await insertLedger("REVOKE", product_id, client); 
+    await client.query("COMMIT"); 
+    res.json({ message: "Product revoked with reason" }); 
+  } catch (err) { 
+    await client.query("ROLLBACK"); 
+    console.error(err); 
+    res.status(500).json({ error: "Revocation failed" }); 
+  } finally { 
+    client.release(); 
+
+--- PAGE 81 ---
+65 
+  } 
+});  
+Figure 4.2 Code Snippet for Product Revocation Route 
+ 
+This revocation route demonstrates how the backend enforces revocation as an 
+irreversible administrative action for active products only. It ensures that the product state, 
+QR activation status, and ledger history remain consistent. 
+4.4.2 Database Implementation 
+The database was implemented according to the relational structure designed in 
+Chapter 3 and refined to support the final prototype. It contains several interconnected tables 
+that collectively support product registration, QR management, scan tracking, clone -risk 
+evaluation, revocation management, and ledger recording.  
+The product table stores the main product information, including product name, serial 
+number, current status, and revocation reason. The qr_code table stores the unique QR 
+identifier assigned to each product and its activation status. The scan_log table stores the 
+history of verification scans, including QR reference, timestamp,  IP address, device 
+information, and approximate location. The clone_risk table stores the most recent risk 
+assessment for each QR code. The ledger_block table stores sequential tamper -evident 
+ledger records for registration, verification, and revocation events.  
+Relationships between these tables are maintained using foreign keys to preserve 
+consistency between products, QR identifiers, scan history, and risk records. This relational 
+structure provides both operational efficiency and traceability of critical system events. 
+
+--- PAGE 82 ---
+66 
+ 
+Figure 4.3 Implemented Database Table in pgAdmin 
+ 
+4.4.3 Frontend Implementation 
+The frontend was implemented as a web -based interface using HTML, CSS, and 
+JavaScript. It supports both manufactur er-side operations and consumer -side verification. 
+The manufacturer-facing side includes the admin login page, registration dashboard, product 
+list page, analytics page, and revocation history page, while the consumer -facing side 
+includes the product verification page.  
+The dashboard enables manufacturers to register products and immediately view the 
+generated QR code for download. The product list page displays all registered products and 
+provides a revocation action for active items. The analytics page presents summary statistics 
+such as total products, total scans, revoked items, and scan activity. The revocation history 
+page displays revoked products and their associated information.  
+The frontend communicates with the backend asynchronously using the Fetch API. 
+This a llows the pages to request data and submit actions dynamically, improving 
+
+
+--- PAGE 83 ---
+67 
+responsiveness and usability. A lightweight API configuration mechanism was also 
+implemented to support correct communication with the backend in different local testing 
+environments. 
+ 
+Figure 4.4 Admin Login Interface 
+  
+ 
+Figure 4.5 Manufacturer Dashboard Interface 
+ 
+ 
+ 
+
+
+--- PAGE 84 ---
+68 
+ 
+Figure 4.6  Product List Interface 
+ 
+ 
+Figure 4.7 Analytics Dashboard 
+ 
+ 
+
+
+--- PAGE 85 ---
+69 
+ 
+Figure 4.8 Revocation History Interface 
+ 
+4.4.4 Graphical User Interface (GUI) 
+The graphical user interface was designed with clarity, simplicity, and usability in 
+mind. On the manufacturer side, a structured dashboard layout with a sidebar menu, input 
+forms, and summary cards was used to support efficient navigation across the main modules. 
+This design helps the user move easily between registration, product listing, analytics, and 
+revocation tracking.  
+On the consumer side, the verification interface was designed to clearly present 
+product authenticity results using different visual states. Authentic products are shown using 
+a green success state. Suspicious products are shown using an orange cautionary 
+recommendation banner. Revoked and invalid products are presented using a red warning 
+state to clearly indicate that the item should not be trusted.  
+This visual design improves the readability of verification results and supports 
+quicker user understanding during product authentication.  
+
+
+--- PAGE 86 ---
+70 
+ 
+Figure 4.9 Consumer Scanning Module 
+ 
+ 
+Figure 4.10 Authentic Product Verification Interface 
+ 
+ 
+
+
+--- PAGE 87 ---
+71 
+ 
+Figure 4.11  Suspicious Product Verification Interface 
+ 
+ 
+Figure 4.12 Revoked Product Verification Interface 
+ 
+
+
+--- PAGE 88 ---
+72 
+ 
+Figure 4.13  Invalid Product Verification Interface 
+ 
+4.4.5 QR Code Security Implementation 
+QR code security was implemented by storing a cr yptographically protected 
+verification payload inside the QR code instead of storing raw product information. Each 
+payload contains a non-sequential QR identifier, an issuance timestamp, and a cryptographic 
+signature. This design reduces the risk of data e xposure and makes QR tampering easier to 
+detect.  
+The backend generates the signature using HMAC -SHA256 together with a server-
+side secret key stored in the environment configuration. During product registration, a signed 
+payload is created and embedded into the verification URL. This URL is then encoded as a 
+QR image and returned to the frontend.  
+ 
+
+
+--- PAGE 89 ---
+73 
+function signPayload(qrId, issuedAt) { 
+  return crypto 
+    .createHmac("sha256", getQrSecret()) 
+    .update(`${qrId}.${issuedAt}`) 
+    .digest("hex"); 
+} 
+function buildSignedPayload(qrId, issuedAt = new 
+Date().toISOString()) { 
+  const payload = { 
+    qr_id: qrId, 
+    issued_at: issuedAt, 
+    sig: signPayload(qrId, issuedAt) 
+  }; 
+   
+ 
+Return 
+Buffer.from(JSON.stringify(payload)).toString("base64url"); 
+}  
+Figure 4.14 Code Snippet for HMAC Signature Generation 
+ 
+This code shows how the QR identifier and issuance timestamp are protected using 
+a server-generated HMAC signature. The resulting payload is then encode d into a format 
+suitable for inclusion in the QR verification URL.  
+When a consumer scans a QR code, the backend validates the signed payload before 
+any database query is performed. If the payload is missing, malformed, or cryptographically 
+invalid, the re quest is rejected immediately. This prevents modified QR data from being 
+treated as legitimate input.  
+
+--- PAGE 90 ---
+74 
+function verifySignedPayload(encodedPayload) { 
+  if (!encodedPayload) { 
+    return { valid: false, reason: "Missing QR payload" }; 
+  } 
+  try { 
+    const parsed = JSON.parse( 
+      Buffer.from(encodedPayload,"base64url").toString("utf8") 
+    ); 
+    const { qr_id: qrId, issued_at: issuedAt, sig } = parsed; 
+    if (!qrId || !issuedAt || !sig) { 
+      return { valid: false, reason: "Incomplete QR payload" }; 
+    } 
+    const expectedSig = signPayload(qrId, issuedAt); 
+    const isValid = 
+      sig.length === expectedSig.length && 
+      crypto.timingSafeEqual(Buffer.from(sig), 
+Buffer.from(expectedSig)); 
+    if (!isValid) { 
+      return { valid: false, reason: "Invalid QR signature" }; 
+    } 
+    return { 
+      valid: true, 
+      qrId, 
+      issuedAt 
+    }; 
+  } catch (err) { 
+    return { valid: false, reason: "Malformed QR payload" }; 
+  } 
+
+--- PAGE 91 ---
+75 
+}  
+Figure 4.15 Code Snippet for Signed QR Payload Validation 
+ 
+This validation function ensures that only authentic and unmodified QR payloads are 
+processed by the system. It forms an essential part of the QR security mechanism. 
+ 
+Figure 4.16  Generated QR Code with Signed Verification Payload 
+4.4.6 Product Verification Module 
+The product verification module is responsible for determining the authenticity state 
+of a scanned product. When a verification request is received, the backend first validates the 
+signed QR payload. If the payload is valid, the corresponding QR identifier  is matched to a 
+registered record in the database.  
+router.post("/verify", async (req, res) => { 
+  const { payload } = req.body; 
+  try { 
+    const validatedPayload = verifySignedPayload(payload); 
+    if (!validatedPayload.valid) { 
+      return res.json({ 
+
+
+--- PAGE 92 ---
+76 
+        status: "Invalid", 
+        message: validatedPayload.reason 
+      }); 
+    } 
+    const result = await pool.query( 
+      `SELECT q.qr_id, q.qr_value, q.is_active, 
+              p.product_id, p.product_name, p.serial_number, 
+              p.product_status, p.revoke_reason 
+       FROM qr_code q 
+       JOIN product p ON q.product_id = p.product_id 
+       WHERE q.qr_value = $1`, 
+      [validatedPayload.qrId] 
+    ); 
+    if (result.rows.length === 0) { 
+      return res.json({ 
+        status: "Invalid", 
+        message: "QR payload does not match a registered 
+product" 
+      }); 
+    } 
+    const data = result.rows[0]; 
+    if (data.product_status === "revoked" || data.is_active 
+=== false) { 
+      return res.json({ 
+        status: "Revoked", 
+        reason: data.revoke_reason, 
+        message: "This product has been revoked" 
+      }); 
+    } 
+    return res.json({ 
+
+--- PAGE 93 ---
+77 
+      status: "Authentic", 
+      product: data.product_name, 
+      serial: data.serial_number, 
+      message: "Product verified successfully" 
+    }); 
+  } catch (err) { 
+    console.error("ERROR:", err.message); 
+    res.status(500).json({ error: "Server error" }); 
+  } 
+}); 
+Figure 4.17 Code Snippet for Verification Request Processing 
+ 
+This code shows that the  verification route first performs cryptographic validation 
+and then uses the decoded QR identifier to retrieve the associated product record from the 
+database. This helps ensure that product verification depends on both payload integrity and 
+backend record existence. 
+Once the product is identified, the backend evaluates the product’s current status and 
+recent scan behaviour. If the product is active and scan behaviour appears normal, the result 
+is returned as authentic. If suspicious behaviour is detected, the system returns a suspicious 
+result. If the product has been revoked, it is returned as revoked regardless of scan behaviour. 
+if (data.product_status === "revoked" || data.is_active === 
+false) { 
+  return res.json({ 
+    status: "Revoked", 
+    reason: data.revoke_reason, 
+    message: "This product has been revoked" 
+  }); 
+
+--- PAGE 94 ---
+78 
+} 
+ 
+let status = "Authentic"; 
+ 
+if (riskAssessment.risk === "Medium" || riskAssessment.risk 
+=== "High") { 
+  status = "Suspicious"; 
+} 
+ 
+return res.json({ 
+  status, 
+  product: data.product_name, 
+  serial: data.serial_number, 
+  scans: scanCount, 
+  risk: riskAssessment.risk, 
+  message: riskAssessment.message 
+});  
+Figure 4.18 Code Snippet for Verification Response Logic 
+ 
+This logic determines the final verification outcome shown to the consumer. It 
+ensures that revoked products can never appear authentic and that suspicious scan behaviour 
+is communicated through a separate advisory state. 
+4.4.7 Scan Tracking and Risk Detection 
+Each successful verification request is recorded in the scan_log table before clone -
+risk analysis is performed. The stored metadata includes the QR reference, IP address, device 
+information, approximate location, and timestamp. These records provide the behavioural 
+history required for counterfeit-risk detection.  
+
+--- PAGE 95 ---
+79 
+await pool.query( 
+  `INSERT INTO scan_log (qr_id, ip_address, device_type, 
+scan_location) 
+   VALUES ($1, $2, $3, $4)`, 
+  [data.qr_id, ip, device, location] 
+); 
+await insertLedger("VERIFY", data.qr_id); 
+Figure 4.19 Code Snippet for Scan Log Recording 
+ 
+This code shows how each verification scan is logged and then appended to the 
+ledger. Scan recording supports both analytical monitoring and subsequent clone -risk 
+evaluation.  
+The clone detection mechanism was implemented as a heuristic process that 
+evaluates recent scan behaviour within a configurable time window. It checks whether the 
+same QR code is scanned excessively within a short interval or whether conse cutive scans 
+originate from locations that are too distant for normal movement. This approach improves 
+detection accuracy by combining temporal and spatial anomaly analysis rather than relying 
+solely on scan frequency.  
+function analyzeScanHistory(scans) { 
+  if (scans.length > SCAN_HIGH_RISK_COUNT) { 
+    return { 
+      risk: "High", 
+      message: "Multiple scans detected within a short 
+verification window" 
+    }; 
+  } 
+
+--- PAGE 96 ---
+80 
+  for (let index = 1; index < scans.length; index += 1) { 
+    const previous = scans[index - 1]; 
+    const current = scans[index]; 
+    const previousLocation = 
+parseLocation(previous.scan_location); 
+    const currentLocation = 
+parseLocation(current.scan_location); 
+    if (!previousLocation || !currentLocation) continue; 
+    const distanceKm = haversineDistanceKm(previousLocation, 
+currentLocation); 
+    const travelMinutes = minutesBetween(previous.scan_time, 
+current.scan_time); 
+    if ( 
+      distanceKm > DISTANCE_THRESHOLD_KM && 
+      travelMinutes < MAX_TRAVEL_MINUTES 
+    ) { 
+      return { 
+        risk: "High", 
+        message: "Scan locations changed too far too quickly 
+for normal usage" 
+      }; 
+    } 
+  } 
+  if (scans.length > SCAN_MEDIUM_RISK_COUNT) { 
+    return { 
+      risk: "Medium", 
+      message: "Unusual repeated scan behaviour detected" 
+    }; 
+  } 
+
+--- PAGE 97 ---
+81 
+  return { 
+    risk: "Low", 
+    message: "Product verified successfully" 
+  }; 
+} 
+Figure 4.20 Code Snippet for Clone Risk Detection Logic 
+ 
+This logic classifies scan behaviour into Low, Medium, or High risk. It provides a 
+behavioural warning mechanism rather than an absolute counterfeit decision, thereby 
+supporting investigation without automatically invalidating otherwise active products.  
+4.4.8 Ledger Block Integration 
+A tamper -evident ledger was integrated into the system to provide an auditable 
+record of critical product -related events. The ledger stores product registration, product 
+verification, and product revocation as sequential hash-linked blocks. Each block contains a 
+unique identifier, the previous block’s hash, its own hash, the event type, a related reference 
+identifier, and a timestamp. 
+async function insertLedger(type, refId, db = pool) { 
+  const last = await db.query( 
+    `SELECT current_hash FROM ledger_block ORDER BY block_id DESC 
+LIMIT 1` 
+  ); 
+  const previous_hash = last.rows.length 
+    ? last.rows[0].current_hash 
+    : "GENESIS"; 
+  const timestamp = new Date().toISOString(); 
+
+--- PAGE 98 ---
+82 
+  const data = buildBlockData(type, refId, timestamp, 
+previous_hash); 
+  const current_hash = generateHash(data); 
+  await db.query( 
+    `INSERT INTO ledger_block 
+     (previous_hash, current_hash, data_type, data_reference_id, 
+timestamp) 
+     VALUES ($1, $2, $3, $4, $5)`, 
+    [previous_hash, current_hash, type, refId, timestamp] 
+  ); 
+} 
+Figure 4.21 Code Snippet for Ledger Block Creation 
+ 
+This function creates a new ledger block by hashing the event information together 
+with the previous block’s hash. By including the previous hash in the current block’s hash 
+computation, the system ensures that each block is cryptographically linked to the entire 
+chain.  
+The ledger also supports validation by recalculating the expected hash of each stored 
+block and comparing it with the recorded current_hash. At the same time, the system checks 
+whether each previous_hash correctly matches the current_hash of the previous block.  
+for (const block of result.rows) { 
+  const expectedHash = generateHash( 
+    buildBlockData( 
+      block.data_type, 
+      block.data_reference_id, 
+      formatStoredTimestamp(block.timestamp), 
+      block.previous_hash 
+
+--- PAGE 99 ---
+83 
+    ) 
+  ); 
+  if ( 
+    block.previous_hash !== previousHash || 
+    block.current_hash !== expectedHash 
+  ) { 
+    isValid = false; 
+    break; 
+  } 
+  previousHash = block.current_hash; 
+} 
+Figure 4.22 Code Snippet for Ledger Integrity Validation 
+ 
+This validation process ensures that unauthorized modification to stored ledger 
+records can be detected. If the ledger validation fails, the system flags the chain as 
+compromised, indicating potential tampering or inconsistency in the recorded data. 
+
+--- PAGE 100 ---
+84 
+ 
+Figure 4.23  Ledger Validation Output 
+ 
+4.5 System Workflow 
+The overall workflow of the system begins when a manufacturer accesses the 
+registration dashboard and enters the product details. These details are submitted to the 
+backend server, where the system inserts the product record into the database and generates 
+a unique non-sequential QR identifier. A signed verification payload is then created using 
+HMAC-SHA256 and embedded into a verification URL. This URL is converted into a QR 
+code i mage and returned to the frontend for display and download. At the same time, a 
+corresponding registration block is appended to the tamper-evident ledger.  
+Once the QR code is distributed with the product, a consumer can scan it using a 
+mobile device. The verification page extracts the signed payload and sends it to the backend 
+verification route. The backend validates the signature before performing any database 
+
+
+--- PAGE 101 ---
+85 
+lookup. If the payload is valid, the backend retrieves the linked product and QR record, stores 
+the scan log entry, evaluates clone-risk behaviour, checks the product status, and returns the 
+final verification result.  
+If the product is active and no suspicious behaviour is detected, the system returns 
+an authentic result. If unusual scan behaviour is detected, the product is classified as 
+suspicious and the frontend displays a recommendation warning. If the product has been 
+revoked, the backend immediately returns a revoked result, and the frontend displays a red 
+high-priority warning state. If the payload is invalid or cannot be matched to a registered 
+record, the system returns an invalid result.  
+Manufacturers can also revoke products through the product list page. When a 
+revocation request is made, the backend checks that the product is still act ive, updates the 
+product status to revoked, disables the linked QR code, and records the revocation event in 
+the ledger. Any later verification request for that QR code will therefore return a revoked 
+result.  
+The workflow demonstrates how the frontend, ba ckend, database, scan logging 
+module, clone detection mechanism, and tamper-evident ledger operate together to support 
+end-to-end product authentication in the prototype.  
+
+--- PAGE 102 ---
+86 
+ 
+Figure 4.24 Overall System Workflow of the Product Authentication System 
+ 
+4.6 Discussion 
+This chapter has presented the implementation of the proposed blockchain -inspired 
+product authentication system and demonstrated how the system design described in Chapter 
+3 was successfully translated int o a functional prototype. The completed system integrates 
+key features including product registration, QR code generation, signed payload protection, 
+product verification, scan logging, clone -risk assessment, product revocation, analytics 
+reporting, and tamper-evident ledger recording.  
+The implementation demonstrates that blockchain -inspired mechanisms can be 
+effectively applied in a controlled environment to enhance data integrity and support 
+counterfeit-risk detection without requiring a fully decentrali zed blockchain network. By 
+combining backend cryptographic validation, behavioural scan analysis, and hash -linked 
+
+
+--- PAGE 103 ---
+87 
+ledger traceability, the system provides a comprehensive end -to-end workflow for product 
+authentication.  
+Furthermore, the frontend and backend components were successfully integrated to 
+support both manufacturer operations and consumer verification. The use of clear 
+verification result states improves usability by enabling users to easily distinguish between 
+authentic, suspicious, revoked, and invalid products. In addition, scan logging and risk 
+classification provide practical indicators for detecting potential QR code cloning.  
+Overall, the implemented prototype satisfies the intended project scope and provides 
+a suitable basis for system testing and evaluation. The next stage of the report therefore 
+focuses on validating whether the system performs correctly according to the planned 
+objectives and functional requirements. 
+ 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 104 ---
+88 
+CHAPTER 5  
+ 
+TESTING 
+5.1 Introduction 
+This chapter presents the testing activities carried out for the developed system. The 
+purpose of this chapter is to determine whether the system functions correctly according to 
+its design objectives and whether it is usable for its intended users. The testing proces s 
+focuses on two main aspects, namely functionality testing and usability testing. Functionality 
+testing was performed to verify that the main features of the system operate correctly, while 
+usability testing was used to evaluate whether the system interfa ce and workflow are 
+understandable and practical for users. The findings from these tests provide evidence that 
+the system is able to support the intended product authentication process in a controlled 
+environment. 
+5.2 Software Testing 
+Software testing was con ducted to evaluate the reliability and practical usability of 
+the developed system. The testing process focused on the core modules of the system, 
+including product registration, QR code generation, verification, clone detection, revocation, 
+and ledger recording. The system was tested in a controlled environment using a local server, 
+PostgreSQL database, and web-based interfaces accessed from desktop and mobile devices.  
+The testing was divided into two categories. The first category was functionality 
+testing, which examined whether the implemented features produced the expected outputs 
+under normal and abnormal conditions. The second category was usability testing, which 
+focused on whether users could interact with the system effectively and whether the 
+verification flow was suitable for practical use, especially on mobile devices.  
+
+--- PAGE 105 ---
+89 
+The availability of a writing tool that can easily assist all undergraduate students in 
+preparing their final thesis will significantly reduce the time required to write thesis. FCSIT 
+will continuously make effort in improving the quality of the thesis produced by students. 
+Students are highly encouraged to learn and use the thesis template provided in 
+preparing their final thesis for evaluation or final submission to graduate. 
+5.2.1 Functionality Test 
+Functionality testing was conducted to evaluate whether the developed system 
+performed its main operations correctly in accordance with the project requirements. The 
+purpose of this testing was to verify that each core feature of the syste m could accept the 
+intended input, process it correctly, and produce the expected output. Since the project 
+focuses on user authentication, product registration, QR-based verification, clone-detection 
+support, revocation handling, ledger recording, and das hboard analytics, the testing 
+concentrated on these major functions.  
+The functionality test cases were derived from the main use cases identified during 
+the system analysis and design phase. Each test case was executed in a contr olled 
+environment using the developed web application, backend server, and database. The 
+observed system behaviour was then compared with the expected result in order to determine 
+whether the implementation satisfied its intended purpose.
+
+--- PAGE 106 ---
+90 
+Table 5.1  Functionality Test Cases 
+Test ID Function Test Scenario Input Expected Result Actual Result Status 
+TC01 User Login Login with valid 
+credentials 
+Valid username and 
+password 
+User is authenticated 
+successfully and 
+redirected to the 
+dashboard 
+Successful login and 
+dashboard displayed 
+Pass 
+TC02 User Login Login with invalid 
+credentials 
+Invalid username or 
+password 
+System rejects login 
+and displays an error 
+message 
+Incorrect login attempt was 
+rejected with an error 
+message 
+Pass 
+TC03 Access Control Attempt to access the 
+dashboard without 
+login 
+Direct URL request System prevents 
+unauthorized access 
+and redirects user to 
+the login page 
+Unauthorized access was 
+prevented 
+Pass 
+TC04 Product Registration Register a product  
+with valid details 
+Product name and 
+serial number 
+Product is 
+successfully registered 
+and a QR code is 
+generated 
+Product was registered 
+successfully and QR code 
+was generated 
+Pass 
+TC05 QR Verification Scan a valid QR code Valid QR payload Product is verif ied 
+successfully and 
+displayed as authentic 
+Product was correctly 
+displayed as authentic 
+Pass 
+
+--- PAGE 107 ---
+91 
+TC06 Invalid QR 
+Detection 
+Scan a tampered QR 
+code 
+Modified or invalid 
+QR payload 
+System rejects the QR 
+code and displays an 
+invalid result 
+System correctly identified 
+the QR code as invalid 
+Pass 
+TC07 Clone Detection 
+(Normal Repeated 
+Scan) 
+Scan the same product 
+repeatedly from the 
+same location 
+Multiple scans from 
+the same location 
+Product should not be 
+marked as suspicious 
+solely due to repeated 
+scans from the same 
+place 
+System kept the product 
+status as normal 
+Pass 
+TC08 Clone Detection 
+(Location Anomaly) 
+Scan the same product 
+from different 
+locations within an 
+unrealistic timeframe 
+Scans from different 
+locations in a short 
+time period 
+System marks the scan 
+as suspicious 
+System correctly marked the 
+scan as suspicious 
+Pass 
+TC09 Product Revocation Revoke an active 
+product 
+Product ID and 
+revocation reason 
+Product status is 
+updated to revoked 
+Product status was 
+successfully updated to 
+revoked 
+Pass 
+TC10 Revoked Product 
+Scan 
+Scan a revoked 
+product QR code 
+Revoked product QR 
+code 
+Warning or revoked 
+result is displayed 
+System correctly displayed 
+the revoked warning 
+Pass 
+TC11 Ledger Recording Perform product 
+registration or 
+revocation 
+System operation Relevant event is 
+recorded in the 
+tamper-evident ledger 
+System correctly recorded 
+the event in the ledger 
+Pass 
+
+--- PAGE 108 ---
+92 
+TC12 Dashboard Analytics Load analytics 
+dashboard 
+System request Correct statistics and 
+scan information are 
+displayed 
+Dashboard displayed the 
+correct st atistics and scan 
+records 
+Pass 
+TC13 User Logout Logout from an 
+authenticated session 
+Logout action User session is ended 
+and login page is 
+displayed 
+Logout completed 
+successfully and login page 
+was shown 
+Pass 
+ 
+Based on the test results, the major functional components of the system operated according to the intended requirements. The  
+authentication module correctly handled valid login, invalid login, access restriction, and logout. The product registration and QR verification 
+functions also worked correctly, while the clone-detection mechanism was able to identify abnormal location-based scan behaviour without 
+incorrectly flagging repeated normal scans from the same place. In addition, revoked products were handl ed correctly during verification, 
+ledger events were recorded successfully, and the analytics dashboard displayed the expected summary information. 
+
+--- PAGE 109 ---
+93 
+5.2.2 Usability Testing 
+Usability testing was conducted to evaluate the practicality, clarity, and ease of use 
+of the developed web-based product authentication system. The system involves two main 
+user groups, namely administrators or manufacturers who manage product records, and 
+consumers who verify product authenticity through QR code scanning. The testing focused  
+on whether the main system functions could be accessed and used easily by the intended 
+users.  
+The usability testing was carried out by observing user interaction with the system 
+on both desktop and mobile devices. The main aspects evaluated included ease of navigation, 
+clarity of information, simplicity of the workflow, responsiveness of the interfaces, and the 
+overall user experience. As the system was developed as a prototype, the evaluation was 
+qualitative and focused on practical usability rather than large-scale user survey results.  
+From the administrator perspective, the system was evaluated based on its ability to 
+support core tasks such as login, product registration, QR code generation, product listing, 
+analytics viewing, and product revocation. The administrator interface was found to be 
+straightforward and easy to understand. The dashboard provided clear navigation to the main 
+functions, while the product registration process required only essential information such as 
+product name and serial nu mber. After registration, the generated QR code was displayed 
+clearly and could be downloaded for use.  
+The product list, analytics, and revocation features also supported the administrator 
+workflow effectively. Registered products could be viewed in an organized manner, and 
+products could be revoked when necessary. The analytics page provided useful scan an d 
+product status information, while the revocation history page allowed revoked products to 
+
+--- PAGE 110 ---
+94 
+be reviewed. Overall, the administrator interface was considered suitable for managing the 
+product authentication process.  
+From the consumer perspective, the verif ication interface was evaluated based on 
+how easily users could verify a product and understand the result. The consumer workflow 
+was kept simple by allowing users to scan a QR code and view the verification outcome 
+directly. The system displayed clear result statuses such as authentic, suspicious, invalid, or 
+revoked, together with relevant product information. Warning and alert messages helped 
+users understand the meaning of suspicious or revoked results without requiring technical 
+knowledge.  
+Mobile usability was also considered important because consumers are expected to 
+scan QR codes using smartphones. The verification interface was tested on mobile devices 
+to ensure that the layout remained readable and functional on smaller screens. The QR 
+scanning an d verification process could be completed successfully when the device had 
+internet access and camera permission. This indicates that the consumer interface is suitable 
+for mobile-based product verification.  
+In summary, the usability testing showed that the system is generally understandable, 
+accessible, and convenient for its intended users. The administrator interface supports the 
+main management operations in a clear and organized manner, while the consumer interface 
+provides a simple QR -based verificat ion process. Overall, the system demonstrates 
+acceptable usability for prototype evaluation and practical demonstration purposes.  
+
+--- PAGE 111 ---
+95 
+5.3 Summary 
+This chapter has presented the testing carried out for the developed system. The 
+testing process was divided into functionality testing and usability testing in order to evaluate 
+both system correctness and user interaction. Functionality testing showed that the major 
+system components, including product registration, QR code generation, verification, clone 
+detection, revocation, and logging, operated according to the intended workflow. Usability 
+testing showed that the interface was generally understandable and suitable for both 
+manufacturer-side management and consumer-side verification.  
+Based on the testing results, the system can be considered successful as an advanced 
+prototype developed within a controlled environment. The core objectives of the project 
+were achieved, particularly in providing a product authentication workflow supported by QR 
+verification, suspicious scan detection, revocation capability, and tamper-evident recording. 
+However, the testing also indicates that the system remains a prototype and still has 
+limitations related to heuristic clone detection, infrastructure dependency, and the absence 
+of ful l decentralization. Despite these limitations, the system provides a strong proof of 
+concept and a solid foundation for further enhancement. 
+ 
+ 
+ 
+
+--- PAGE 112 ---
+96 
+CHAPTER 6  
+ 
+ 
+CONCLUSION AND FURTHER WORK 
+6.1 Introduction 
+This chapter presents the overall conclusion of the project. It evaluates the extent to 
+which the project objectives have been achieved, outlines the key contributions of the 
+developed system, discusses the limitations encountered, and proposes directions for future 
+enhancements. This chapter serves to assess the significance of the project and position the 
+developed system as a foundation for further advancement in product authentication and 
+anti-counterfeit solutions. 
+6.2 Achievements of Objectives 
+The objectives of this project have been suc cessfully achieved through the 
+development of the proposed system. The completed prototype demonstrates the integration 
+of QR-based product verification, clone detection, product revocation, and tamper -evident 
+record keeping within a web-based environment.  
+The first objective was to design a secure system for registering and verifying product 
+information using unique QR codes. This objective was fulfilled through the implementation 
+of a product registration module that enables manufacturers to register products and generate 
+corresponding QR codes. The verification component allows consumers to scan QR codes 
+and retrieve authenticity status along with relevant product details. Furthermore, the system 
+enhances security by utilising a protected verification pa yload rather than exposing raw 
+product information directly within the QR code.  
+
+--- PAGE 113 ---
+97 
+The second objective was to implement clone -detection and product revocation 
+mechanisms to manage counterfeit -related risks. This objective was achieved within the 
+defined pro ject scope. The system monitors scan behaviour and identifies suspicious 
+activities based on predefined detection logic. Although the mechanism does not provide 
+definitive proof of counterfeiting, it functions effectively as a heuristic risk indicator. The  
+revocation feature further strengthens risk management by allowing manufacturers to 
+invalidate compromised or suspicious products, ensuring they are no longer considered valid 
+during verification.  
+The third objective was to develop a web-based prototype integrating QR generation, 
+a blockchain-based tamper-evident ledger, and a verification interface. This objective was 
+accomplished through the implementation of a complete system comprising manufacturer 
+side management, consumer -side verification, scan log ging, and revocation handling. 
+System events are recorded in an append -only ledger structure, reflecting key blockchain 
+principles such as cryptographic hash chaining, immutability, and traceability. Although not 
+fully decentralized, the system demonstrates the practical application of a blockchain-based 
+approach within a controlled prototype environment.  
+Overall, the project objectives have been successfully fulfilled, resulting in a 
+functional end -to-end authentication system that satisfies the intended project aim and 
+provides a strong proof of concept.  
+6.3 Contribution 
+This project contributes both practically and academically to the field of product 
+authentication.  
+
+--- PAGE 114 ---
+98 
+From a practical perspective, the system provides an integrated solution that 
+combines pro duct registration, QR code generation, verification, clone detection, and 
+revocation management within a unified platform. This demonstrates a complete 
+authentication workflow rather than isolated feature implementation.  
+The project also contributes by applying a blockchain-based approach in a practical 
+context. The inclusion of a tamper -evident ledger enhances data integrity and traceability, 
+demonstrating how core blockchain principles can be adapted without requiring fu ll 
+decentralization.  
+Another key contribution is the implementation of clone detection based on scan 
+behaviour. By analysing scan patterns, the system introduces a behavioural security layer 
+that extends beyond static QR validation, supporting more inform ed counterfeit risk 
+assessment.  
+Additionally, the revocation mechanism strengthens system reliability by ensuring 
+that compromised products can be explicitly invalidated and excluded from future 
+verification.  
+From an academic standpoint, the project demonstrates the feasibility of integrating 
+QR-based verification, behavioural detection, revocation handling, and tamper -evident 
+recording into a cohesive system, providing a valuable reference for future research and 
+development. 
+6.4 Limitations 
+Despite the succ essful implementation of the project, several limitations remain in 
+the current system.  
+
+--- PAGE 115 ---
+99 
+Firstly, although the system is described as blockchain -based, it is not fully 
+decentralized. The implementation relies on a centralized backend and database, and 
+therefore does not achieve full distributed trust, consensus, or independent verification found 
+in real blockchain networks.  
+The second limitation relates to the clone-detection mechanism. The suspicious scan 
+detection logic is heuristic in nature and should be interpreted as a risk indicator rather than 
+definitive proof of counterfeit activity. Abnormal scan patterns may suggest possible misuse, 
+but they do not guarantee that a product is counterfeit. This means that revocation decisions 
+still depend on manufacturer judgment rather than fully automated certainty.  
+The system also remains at prototype level in terms of broader security and 
+operational robustness. Areas such as full authentication and authorization, large -scale 
+performance testing, automated tes ting coverage, and production -level security were not 
+fully addressed within the scope of the project.  
+6.5 Future Works 
+Several improvements can be considered for future development of the system:  
+ A real decentralized blockchain layer can be implemented by deploying smart 
+contracts and migrating important product events such as registration and 
+revocation onto a blockchain platform to enhance system immutability and 
+transparency.  
+ The clone-detection mechanism can be further improved by incorporating 
+more adv anced anomaly detection techniques, including enhanced 
+
+--- PAGE 116 ---
+100 
+behavioural analysis, improved location evaluation, and the use of machine 
+learning to identify abnormal verification patterns.  
+ User security and access control can be strengthened by introducing a proper 
+authentication mechanism for manufacturers, implementing role -based 
+authorization, and enhancing audit and access monitoring features.  
+ The system can be improved through more comprehensive testing, including 
+automated testing, performance evaluation,  and scalability analysis, to 
+increase overall reliability and robustness.  
+ The user experience can be enhanced by providing more detailed analytics, 
+improved scan log filtering, exportable reports, better mobile interface 
+design, and more convenient remote deployment options.  
+ The system can be extended to support full supply chain traceability by 
+enabling tracking of product movement, ownership transitions, and lifecycle 
+events across multiple stakeholders. 
+6.6 Conclusion 
+In conclusion, this project successfu lly developed a blockchain -based product 
+authentication system incorporating clone -detection and revocation features. The system 
+demonstrates that QR -based verification, behavioural analysis, and tamper -evident 
+recording can be effectively integrated into a practical authentication workflow.  
+Although the system is not fully decentralized or production -ready, it provides a 
+meaningful contribution by illustrating how blockchain -based principles and behavioural 
+
+--- PAGE 117 ---
+101 
+detection can enhance product authentication sys tems. The identified limitations highlight 
+opportunities for improvement, while the proposed future work outlines clear directions for 
+further development.  
+Overall, the system demonstrates the practical potential of combining blockchain -
+based principles with behavioural verification to enhance trust, security, and transparency in 
+modern product authentication systems.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+
+--- PAGE 118 ---
+102 
+REFERENCES 
+ Kulkarni, D.P., Manwar, T. V., Naykawadi, F. J., & Patil, P. M. (2025). Fake product 
+identification using blockchain. In Journal Publication of International Research for 
+Engineering and Management. JOIREM. https://joirem.com/wp 
+content/uploads/journal/published_paper/volume-05/issue-4/J_KBDOl5Km.pdf. 
+Mallegowda, M., Kanavalli, A., Thippeswamy, M. N., Gupta, K., Khandelwal, L., Bhattad, 
+V., & Vaswani, H. (2022). Fake product identification system using blockchain. 
+IEEE Conference Publication. https://doi.org/10.1109/i4c57141.2022.10057923 
+Nagar, R., Chaturvedi, N., & Prabakaran , J. (2023). Product authentication system using 
+blockchain. IEEE Conference  Publication 
+https://doi.org/10.1109/icnwc57852.2023.10127447 Publication. 
+Rajkumar. (2016, April 5). Waterfall Model in Software Development Life Cycle. Software 
+Testing Material.  https://www.softwaretestingmaterial.com/waterfall-model-in-
+sdlc/#google_vignette 
+Shankar, B. P., & Jayavadivel, R. (2019, December 12). A survey of counterfeit product 
+detection. International Journal of Scientific & Technology Research, 8(12), 2958 -
+2962. https://www.ijstr.org/final-print/dec2019/A-Survey-Of-Counterfeit-Product-
+Detection.pdf 
+Tiwari, K., Patil, N., Gupta, A., Sabale, A., & Lomte, V. (2023, May). Fake product detection 
+using blockchain technology. In International Research Journal of Modernization in 
+Engineering Technology and Science (pp. 2582 –5208). 
+https://www.irjmets.com/uploadedfiles/paper/issue_5_may_2023/41058/final/fin_ir
+jmets 1685631927.pdf 
+
+--- PAGE 119 ---
+103 
+Wasnik, K., Sondawle, I., Wani, R., & Pulgam, N. (2022). Detection of counterfeit products 
+using blockchain. ITM Web  of Conferences, 44, 03015.  
+https://doi.org/10.1051/itmconf/20224403015 of Conferences, 44, 03015 
+ 
+ 
+ 

@@ -50,6 +50,13 @@ function minutesBetween(first, second) {
 }
 
 function analyzeScanHistory(scans) {
+  if (scans.length > SCAN_HIGH_RISK_COUNT) {
+    return {
+      risk: "High",
+      message: "Multiple scans detected within a short verification window"
+    };
+  }
+
   for (let index = 1; index < scans.length; index += 1) {
     const previous = scans[index - 1];
     const current = scans[index];
@@ -72,6 +79,13 @@ function analyzeScanHistory(scans) {
         message: "Scan locations changed too far too quickly for normal usage"
       };
     }
+  }
+
+  if (scans.length > SCAN_MEDIUM_RISK_COUNT) {
+    return {
+      risk: "Medium",
+      message: "Unusual repeated scan behaviour detected"
+    };
   }
 
   return {
