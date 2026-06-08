@@ -1,0 +1,807 @@
+
+
+===== PAGE 1 =====
+58 
+CHAPTER 4  
+ 
+ 
+IMPLEMENTATION 
+4.1 Introduction 
+This chapter presents the implementation of the proposed product authentication 
+system. The system was developed based on the design outlined in Chapter 3 and integrates 
+a backend server, a PostgreSQL database, and a web -based user interface for both 
+manufacturers and consumers. The purpose of this chapter is to explain how the proposed 
+design was translated into a functional prototype and to describe how the implemented 
+modules operate cohesively in practice.  
+The completed prototype supports product regis tration, QR code generation, QR 
+payload protection, product verification, scan logging, clone risk detection, product 
+revocation, and tamper-evident ledger recording. The implementation focuses on delivering 
+an end-to-end proof of concept within a controll ed environment. This chapter also outlines 
+the system requirements, development setup, implementation details, and the overall 
+workflow of the completed system. 
+4.2 System Requirements 
+4.2.1 Hardware Requirement 
+The system was developed and tested using a laptop equ ipped with an AMD Ryzen 
+5 processor with Radeon Graphics and 16 GB of RAM. This hardware configuration 
+provided sufficient computational capability and memory to support local development, 
+backend execution, database management, and browser-based testing.  
+
+
+===== PAGE 2 =====
+59 
+The processor handled server -side request processing, QR code generation, hash 
+computation, and ledger -related operations, while the available memory supported 
+multitasking activities such as running the code editor, database tools, local server, and 
+browser simultaneously without significant performance degradation. Adequate storage 
+space was also required to install software tools, project dependencies, and database files.  
+An internet connection was required during development for downloading 
+dependencies, accessing technical documentation, and supporting certain testing activities 
+such as IP -based geolocation lookup. Overall, the hardware used was sufficient to support 
+stable development and testing of the prototype in a controlled environment.  
+4.2.2 Software Requirements 
+The system was developed on the Windows operating system. The backend was 
+implemented using Node.js and the Express framework, which were used to provide server-
+side logic, REST-style API routing, QR payload validation, clone detection logic, revocation 
+handling, and ledger integration.  
+PostgreSQL was used as the relational database management system to store 
+structured data such as product records, QR identifiers, scan logs, clone risk assessments, 
+and ledger blocks. Database interaction wa s handled through the pg library. The frontend 
+was implemented using HTML, CSS, and JavaScript to create a web -based dashboard and 
+consumer-facing verification interface. Frontend -backend communication was performed 
+using the Fetch API.  
+Several development tools were used throughout the implementation process. Visual 
+Studio Code was used as the primary source code editor, pgAdmin was used for database 
+
+
+===== PAGE 3 =====
+60 
+administration, and Postman was used for API testing. Additional supporting packages 
+included dotenv for e nvironment configuration, qrcode for QR image generation, and cors 
+for handling cross-origin requests during testing.  
+4.3 System Development 
+4.3.1 Installation and Configuration 
+The development environment was prepared by installing Node.js, PostgreSQL, and 
+the req uired development tools. After the project structure was created, the necessary 
+dependencies were installed using npm. These dependencies included Express for backend 
+routing, pg for PostgreSQL connectivity, dotenv for environment variable management, and 
+qrcode for QR code generation.  
+System configuration was managed through an environment file (.env) to improve 
+maintainability and reduce hardcoded values in the source code. Important configuration 
+values included the public verification URL, database con nection settings, HMAC secret 
+key for QR security, and threshold values for clone detection. This approach made the 
+implementation easier to manage and allowed sensitive values to be kept separate from the 
+main application logic.  
+After configuration was c ompleted, the Express server was connected to the 
+PostgreSQL database and tested locally. Once the backend routes were functioning correctly, 
+the frontend pages were integrated with the backend API to support full system interaction 
+through the browser. 
+
+
+===== PAGE 4 =====
+61 
+4.4 System Implementation 
+4.4.1 Backend Implementation 
+The backend system was implemented using Node.js and Express following a REST-
+style API structure. It handles the main operations of the authentication workflow, including 
+product registration, QR generation, sign ed payload verification, scan logging, clone risk 
+evaluation, revocation processing, analytics retrieval, and ledger block creation.  
+During product registration, the backend receives product details from the 
+manufacturer dashboard, inserts the product int o the database, generates a unique non -
+sequential QR identifier, constructs a signed verification payload, and returns a QR 
+verification URL together with a generated QR image. A corresponding ledger block is also 
+appended to record the registration event.  
+router.post("/product/register", async (req, res) => { 
+  const { name, manufacturer_id, serial_number } = req.body; 
+  const client = await pool.connect(); 
+  try { 
+    await client.query("BEGIN"); 
+    const productResult = await client.query( 
+      `INSERT INTO product (manufacturer_id, product_name, 
+serial_number) 
+       VALUES ($1, $2, $3) RETURNING *`, 
+      [manufacturer_id, name, serial_number] 
+    ); 
+    const product = productResult.rows[0]; 
+    const qr_value = crypto.randomUUID(); 
+
+
+===== PAGE 5 =====
+62 
+    await client.query( 
+      `INSERT INTO qr_code (product_id, qr_value) 
+       VALUES ($1, $2)`, 
+      [product.product_id, qr_value] 
+    ); 
+    await insertLedger("REGISTER", product.product_id, 
+client); 
+    const baseUrl = buildPublicBaseUrl(req); 
+    const { payload, qrUrl } = buildVerificationUrl(baseUrl, 
+qr_value); 
+    const qrImage = await QRCode.toDataURL(qrUrl); 
+    await client.query("COMMIT"); 
+    res.json({ 
+      message: "Product registered", 
+      qr_value, 
+      qr_payload: payload, 
+      qr_url: qrUrl, 
+      qr_image: qrImage 
+    }); 
+  } catch (err) { 
+    await client.query("ROLLBACK"); 
+    console.error("ERROR:", err); 
+    res.status(500).json({ error: "Server error" }); 
+  } finally { 
+    client.release(); 
+  } 
+}); 
+Figure 4.1 Code Snippet for Product Registration Route 
+ 
+
+
+===== PAGE 6 =====
+63 
+This route shows how the backend handles product registration by combining 
+database insertion, QR identifier creation, signed payload generation, and ledger recording 
+into a single workflow. This ensures that a newly registered product is immediately linke d 
+to a verifiable QR code and an auditable event record.  
+The backend also processes verification and revocation requests. During verification, 
+the backend validates the signed QR payload before any database lookup is performed. If 
+valid, the system retrieves the associated product, stores the scan metadata, evaluates clone 
+risk, checks whether the product has been revoked, and returns the correct verification status. 
+Revocation is handled through a dedicated route that changes the product status, disables the 
+QR code, and appends a revocation event to the ledger.  
+router.post("/product/revoke", async (req, res) => { 
+  const { product_id, reason } = req.body; 
+  const client = await pool.connect(); 
+  try { 
+    await client.query("BEGIN"); 
+    const productResult = await client.query( 
+      `SELECT product_status FROM product WHERE product_id 
+= $1`, 
+      [product_id] 
+    ); 
+    if (productResult.rows.length === 0) { 
+      await client.query("ROLLBACK"); 
+      return res.status(404).json({ error: "Product not 
+found" }); 
+    } 
+     
+
+
+===== PAGE 7 =====
+64 
+if (productResult.rows[0].product_status !== "active") { 
+      await client.query("ROLLBACK"); 
+      return res.status(400).json({ 
+        error: "Invalid revocation request. Onl y active 
+products can be revoked." 
+      }); 
+    } 
+    await client.query( 
+      `UPDATE product 
+       SET product_status = 'revoked', 
+           revoke_reason = $2, 
+           updated_at = NOW() 
+       WHERE product_id = $1`, 
+      [product_id, reason] 
+    ); 
+    await client.query( 
+      `UPDATE qr_code 
+       SET is_active = false 
+       WHERE product_id = $1`, 
+      [product_id] 
+    ); 
+    await insertLedger("REVOKE", product_id, client); 
+    await client.query("COMMIT"); 
+    res.json({ message: "Product revoked with reason" }); 
+  } catch (err) { 
+    await client.query("ROLLBACK"); 
+    console.error(err); 
+    res.status(500).json({ error: "Revocation failed" }); 
+  } finally { 
+    client.release(); 
+
+
+===== PAGE 8 =====
+65 
+  } 
+});  
+Figure 4.2 Code Snippet for Product Revocation Route 
+ 
+This revocation route demonstrates how the backend enforces revocation as an 
+irreversible administrative action for active products only. It ensures that the product state, 
+QR activation status, and ledger history remain consistent. 
+4.4.2 Database Implementation 
+The database was implemented according to the relational structure designed in 
+Chapter 3 and refined to support the final prototype. It contains several interconnected tables 
+that collectively support product registration, QR management, scan tracking, clone -risk 
+evaluation, revocation management, and ledger recording.  
+The product table stores the main product information, including product name, serial 
+number, current status, and revocation reason. The qr_code table stores the unique QR 
+identifier assigned to each product and its activation status. The scan_log table stores the 
+history of verification scans, including QR reference, timestamp, IP address, device 
+information, and app roximate location. The clone_risk table stores the most recent risk 
+assessment for each QR code. The ledger_block table stores sequential tamper -evident 
+ledger records for registration, verification, and revocation events.  
+Relationships between these tabl es are maintained using foreign keys to preserve 
+consistency between products, QR identifiers, scan history, and risk records. This relational 
+structure provides both operational efficiency and traceability of critical system events. 
+
+
+===== PAGE 9 =====
+66 
+ 
+Figure 4.3 Implemented Database Table in pgAdmin 
+ 
+4.4.3 Frontend Implementation 
+The frontend was implemented as a web -based interface using HTML, CSS, and 
+JavaScript. It supports both manufacturer -side operations and cons umer-side verification. 
+The manufacturer-facing side includes the admin login page, registration dashboard, product 
+list page, analytics page, and revocation history page, while the consumer -facing side 
+includes the product verification page.  
+The dashboard enables manufacturers to register products and immediately view the 
+generated QR code for download. The product list page displays all registered products and 
+provides a revocation action for active items. The analytics page presents summary statistics 
+such as total products, total scans, revoked items, and scan activity. The revocation history 
+page displays revoked products and their associated information.  
+The frontend communicates with the backend asynchronously using the Fetch API. 
+This a llows the pages to request data and submit actions dynamically, improving 
+
+
+
+===== PAGE 10 =====
+67 
+responsiveness and usability. A lightweight API configuration mechanism was also 
+implemented to support correct communication with the backend in different local testing 
+environments. 
+ 
+Figure 4.4 Admin Login Interface 
+  
+ 
+Figure 4.5 Manufacturer Dashboard Interface 
+ 
+ 
+ 
+
+
+
+===== PAGE 11 =====
+68 
+ 
+Figure 4.6  Product List Interface 
+ 
+ 
+Figure 4.7 Analytics Dashboard 
+ 
+ 
+
+
+
+===== PAGE 12 =====
+69 
+ 
+Figure 4.8 Revocation History Interface 
+ 
+4.4.4 Graphical User Interface (GUI) 
+The graphical user interfa ce was designed with clarity, simplicity, and usability in 
+mind. On the manufacturer side, a structured dashboard layout with a sidebar menu, input 
+forms, and summary cards was used to support efficient navigation across the main modules. 
+This design helps the user move easily between registration, product listing, analytics, and 
+revocation tracking.  
+On the consumer side, the verification interface was designed to clearly present 
+product authenticity results using different visual states. Authentic products are shown using 
+a green success state. Suspicious products are shown using an orange cautionary 
+recommendation banner. Revoked and invalid products are presented using a red warning 
+state to clearly indicate that the item should not be trusted.  
+This vis ual design improves the readability of verification results and supports 
+quicker user understanding during product authentication.  
+
+
+
+===== PAGE 13 =====
+70 
+ 
+Figure 4.9 Authentic Product Verification Interface 
+ 
+ 
+Figure 4.10  Suspicious Product Verification Interface 
+ 
+
+
+
+===== PAGE 14 =====
+71 
+ 
+Figure 4.11 Revoked Product Verification Interface 
+ 
+Figure 4.12  Invalid Product Verification Interface 
+ 
+ 
+
+
+
+===== PAGE 15 =====
+72 
+4.4.5 QR Code Security Implementation 
+QR code security was implemented by storing a cryptographically protected 
+verification payload inside the QR code instead of storing raw product information. Each 
+payload contains a non-sequential QR identifier, an issuance timestamp, and a cryptographic 
+signature. This design reduces the risk of data exposure and makes QR tampering easier to 
+detect.  
+The backend generates the signature using HMAC -SHA256 together with a server-
+side secret key stored in the environment configuration. During product registration, a signed 
+payload is created and embedded into the verification URL. This URL is then encoded as a 
+QR image and returned to the frontend.  
+function signPayload(qrId, issuedAt) { 
+  return crypto 
+    .createHmac("sha256", getQrSecret()) 
+    .update(`${qrId}.${issuedAt}`) 
+    .digest("hex"); 
+} 
+function buildSignedPayload(qrId, issuedAt = new 
+Date().toISOString()) { 
+  const payload = { 
+    qr_id: qrId, 
+    issued_at: issuedAt, 
+    sig: signPayload(qrId, issuedAt) 
+  }; 
+ 
+Return 
+Buffer.from(JSON.stringify(payload)).toString("base64url"); 
+
+
+===== PAGE 16 =====
+73 
+}  
+Figure 4.13 Code Snippet for HMAC Signature Generation 
+ 
+This code shows how the QR identifier and issuance timestamp are protected using 
+a server-generated HMAC signature. The resulting payload is then encoded into a format 
+suitable for inclusion in the QR verification URL.  
+When a consumer scans a QR code, the backend validates the signed payload before 
+any database query is performed. If the payload is missing, malformed, or cryptographically 
+invalid, the request is rejected immediately. This prevents modified QR data from being 
+treated as legitimate input.  
+function verifySignedPayload(encodedPayload) { 
+  if (!encodedPayload) { 
+    return { valid: false, reason: "Missing QR payload" }; 
+  } 
+  try { 
+    const parsed = JSON.parse( 
+      Buffer.from(encodedPayload,"base64url").toString("utf8") 
+    ); 
+    const { qr_id: qrId, issued_at: issuedAt, sig } = parsed; 
+    if (!qrId || !issuedAt || !sig) { 
+      return { valid: false, reason: "Incomplete QR payload" }; 
+    } 
+    const expectedSig = signPayload(qrId, issuedAt); 
+    const isValid = 
+      sig.length === expectedSig.length && 
+
+
+===== PAGE 17 =====
+74 
+      crypto.timingSafeEqual(Buffer.from(sig), 
+Buffer.from(expectedSig)); 
+    if (!isValid) { 
+      return { valid: false, reason: "Invalid QR signature" }; 
+    } 
+    return { 
+      valid: true, 
+      qrId, 
+      issuedAt 
+    }; 
+  } catch (err) { 
+    return { valid: false, reason: "Malformed QR payload" }; 
+  } 
+}  
+Figure 4.14 Code Snippet for Signed QR Payload Validation 
+ 
+This validation function ensures that only authentic and unmodified QR payloads are 
+processed by the system. It forms an essential part of the QR security mechanism. 
+ 
+Figure 4.15  Generated QR Code with Signed Verification Payload 
+
+
+
+===== PAGE 18 =====
+75 
+4.4.6 Product Verification Module 
+The product verification module is responsible for determining the authenticity state 
+of a scanned product. When a verification request is received, the backend first validates the 
+signed QR payload. If the payload is valid, the corresponding QR i dentifier is matched to a 
+registered record in the database.  
+router.post("/verify", async (req, res) => { 
+  const { payload } = req.body; 
+  try { 
+    const validatedPayload = verifySignedPayload(payload); 
+    if (!validatedPayload.valid) { 
+      return res.json({ 
+        status: "Invalid", 
+        message: validatedPayload.reason 
+      }); 
+    } 
+    const result = await pool.query( 
+      `SELECT q.qr_id, q.qr_value, q.is_active, 
+              p.product_id, p.product_name, p.serial_number, 
+              p.product_status, p.revoke_reason 
+       FROM qr_code q 
+       JOIN product p ON q.product_id = p.product_id 
+       WHERE q.qr_value = $1`, 
+      [validatedPayload.qrId] 
+    ); 
+    if (result.rows.length === 0) { 
+      return res.json({ 
+        status: "Invalid", 
+
+
+===== PAGE 19 =====
+76 
+        message: "QR payload does not match a registered 
+product" 
+      }); 
+    } 
+    const data = result.rows[0]; 
+    if (data.product_status === "revoked" || data.is_active 
+=== false) { 
+      return res.json({ 
+        status: "Revoked", 
+        reason: data.revoke_reason, 
+        message: "This product has been revoked" 
+      }); 
+    } 
+    return res.json({ 
+      status: "Authentic", 
+      product: data.product_name, 
+      serial: data.serial_number, 
+      message: "Product verified successfully" 
+    }); 
+  } catch (err) { 
+    console.error("ERROR:", err.message); 
+    res.status(500).json({ error: "Server error" }); 
+  } 
+}); 
+Figure 4.16 Code Snippet for Verification Request Processing 
+ 
+This code shows that the verification route first performs cryptographic validation 
+and then uses the decoded QR identifier to retrieve the associated product record from the 
+
+
+===== PAGE 20 =====
+77 
+database. This helps ensure that product verificat ion depends on both payload integrity and 
+backend record existence. 
+Once the product is identified, the backend evaluates the product’s current status and 
+recent scan behaviour. If the product is active and scan behaviour appears normal, the result 
+is returned as authentic. If suspicious behaviour is detected, the system returns a suspicious 
+result. If the product has been revoked, it is returned as revoked regardless of scan behaviour. 
+if (data.product_status === "revoked" || data.is_active === 
+false) { 
+  return res.json({ 
+    status: "Revoked", 
+    reason: data.revoke_reason, 
+    message: "This product has been revoked" 
+  }); 
+} 
+ 
+let status = "Authentic"; 
+ 
+if (riskAssessment.risk === "Medium" || riskAssessment.risk 
+=== "High") { 
+  status = "Suspicious"; 
+} 
+ 
+return res.json({ 
+  status, 
+  product: data.product_name, 
+  serial: data.serial_number, 
+  scans: scanCount, 
+  risk: riskAssessment.risk, 
+  message: riskAssessment.message 
+
+
+===== PAGE 21 =====
+78 
+});  
+Figure 4.17 Code Snippet for Verification Response Logic 
+ 
+This logic determines the final verification outcome shown to the consumer. It 
+ensures that revoked products can never appear authentic and that suspicious scan behaviour 
+is communicated through a separate advisory state. 
+4.4.7 Scan Tracking and Risk Detection 
+Each successful verification request is recorded in the  scan_log table before clone-
+risk analysis is performed. The stored metadata includes the QR reference, IP address, device 
+information, approximate location, and timestamp.  Although device information is stored 
+for audit and monitoring purposes, the clone-risk decision is mainly based on scan frequency, 
+location distance, and scan timing. These records provide the behavioural history required 
+for counterfeit-risk detection. 
+await client.query( 
+  `INSERT INTO scan_log (qr_id, ip_address, device_type, 
+scan_location) 
+   VALUES ($1, $2, $3, $4)`, 
+  [data.qr_id, ip, device, location] 
+); 
+ 
+await insertLedger("VERIFY", data.qr_id, client); 
+Figure 4.18 Code Snippet for Scan Log Recording 
+ 
+ 
+
+
+===== PAGE 22 =====
+79 
+This code shows how each verification scan is logged and then appended to the 
+ledger. Scan recording supports both analytical monitoring and subsequent clone -risk 
+evaluation. 
+The clone detection mechanism was implemented as a heuristic process that 
+evaluates recent scan behaviour within a configurable time window. The mechanism checks 
+whether the same QR code is scanned from geographically distant locations within an 
+unrealistic timeframe. It also considers repeated scans only when the scan locations are 
+meaningfully different and exceed the configured distance threshold. Therefore, repeated 
+scans from the same or nearby locations can still be treated as normal behaviour, reducing 
+false positives during legitimate consumer use.  
+function hasMultipleApproximateLocations(scans) { 
+  const locations = new Set(); 
+ 
+  scans.forEach(scan => { 
+    const location = parseLocation(scan.scan_location); 
+    if (location) { 
+locations.add(`${location.latitude.toFixed(3)}, 
+${location.longitude.toFixed(3)}`); 
+    } 
+  }); 
+  return locations.size > 1; 
+} 
+function hasDistantLocations(scans) { 
+  const locations = scans 
+    .map(scan => parseLocation(scan.scan_location)) 
+
+
+===== PAGE 23 =====
+80 
+    .filter(Boolean); 
+  for (let firstIndex = 0; firstIndex < locations.length; 
+firstIndex += 1) { 
+    for ( 
+      let secondIndex = firstIndex + 1; 
+      secondIndex < locations.length; 
+      secondIndex += 1 
+    ) { 
+      if ( 
+        haversineDistanceKm(locations[firstIndex], 
+locations[secondIndex]) > 
+        DISTANCE_THRESHOLD_KM 
+      ) { 
+        return true; 
+      } 
+    } 
+  } 
+ 
+  return false; 
+} 
+Figure 4.19 Code Snippet for Location Context Detection 
+ 
+ The functions above determine whether scans occurred from multiple approximate 
+locations and whether those locations are far enough apart to be considered suspicious. This 
+avoids marking repeated scans from the same location as suspicious. 
+function analyzeScanHistory(scans) { 
+  const hasDifferentLocations = 
+hasMultipleApproximateLocations(scans); 
+  const hasFarLocations = hasDistantLocations(scans); 
+ 
+
+
+===== PAGE 24 =====
+81 
+  if (hasDifferentLocations && hasFarLocations && 
+scans.length > SCAN_HIGH_RISK_COUNT) { 
+    return { 
+      risk: "High", 
+      message: "Multiple scans detected from distant 
+locations within a short verification window" 
+    }; 
+  } 
+ 
+  for (let index = 1; index < scans.length; index += 1) { 
+    const previous = scans[index - 1]; 
+    const current = scans[index]; 
+ 
+    const previousLocation = 
+parseLocation(previous.scan_location); 
+    const currentLocation = 
+parseLocation(current.scan_location); 
+ 
+    if (!previousLocation || !currentLocation) continue; 
+ 
+    const distanceKm = haversineDistanceKm(previousLocation, 
+currentLocation); 
+    const travelMinutes = minutesBetween(previous.scan_time, 
+current.scan_time); 
+ 
+    if ( 
+      distanceKm > DISTANCE_THRESHOLD_KM && 
+      travelMinutes < MAX_TRAVEL_MINUTES 
+    ) { 
+      return { 
+        risk: "High", 
+
+
+===== PAGE 25 =====
+82 
+        message: "Scan locations changed too far too quickly 
+for normal usage" 
+      }; 
+    } 
+  } 
+ 
+  if (hasDifferentLocations && hasFarLocations && 
+scans.length > SCAN_MEDIUM_RISK_COUNT) { 
+    return { 
+      risk: "Medium", 
+      message: "Unusual repeated scan behaviour detected 
+across distant locations" 
+    }; 
+  } 
+ 
+  return { 
+    risk: "Low", 
+    message: "Product verified successfully" 
+  }; 
+} 
+Figure 4.20 Code Snippet for Clone Risk Detection Logic 
+ 
+This logic classifies scan behaviour into Low, Medium, or High risk. High risk is 
+assigned when scans occur from distant locations within an unrealistic time period or when 
+excessive scans occur across distant locations within the verification window. Medium risk 
+is assigned when repeated scan behaviour is detected across distant locations but does not 
+reach the high-risk threshold. If scans are repeated from the same or nearby locations, the 
+product remains Low risk and can still be displayed as authentic. This provides a behavioural 
+warning mechanism without automatically invalidating active products. 
+
+
+===== PAGE 26 =====
+83 
+4.4.8 Ledger Block Integration 
+A tamper -evident ledger was integrated into the system to provide an auditable 
+record of critical produ ct-related events. The ledger stores product registration, product 
+verification, and product revocation as sequential hash-linked blocks. Each block contains a 
+unique identifier, the previous block’s hash, its own hash, the event type, a related reference 
+identifier, and a timestamp. 
+async function insertLedger(type, refId, db = pool) { 
+  const last = await db.query( 
+    `SELECT current_hash FROM ledger_block ORDER BY block_id DESC 
+LIMIT 1` 
+  ); 
+  const previous_hash = last.rows.length 
+    ? last.rows[0].current_hash 
+    : "GENESIS"; 
+  const timestamp = new Date().toISOString(); 
+  const data = buildBlockData(type, refId, timestamp, 
+previous_hash); 
+  const current_hash = generateHash(data); 
+  await db.query( 
+    `INSERT INTO ledger_block 
+     (previous_hash, current_hash, data_type, data_reference_id, 
+timestamp) 
+     VALUES ($1, $2, $3, $4, $5)`, 
+    [previous_hash, current_hash, type, refId, timestamp] 
+  ); 
+} 
+Figure 4.21 Code Snippet for Ledger Block Creation 
+ 
+ 
+
+
+===== PAGE 27 =====
+84 
+This function creates a new ledger block by hashing the event information together 
+with the previous block’s hash. By including the previous hash in the current block’s hash 
+computation, the system ensures that each block is crypto graphically linked to the entire 
+chain.  
+The ledger also supports validation by recalculating the expected hash of each stored 
+block and comparing it with the recorded current_hash. At the same time, the system checks 
+whether each previous_hash correctly matches the current_hash of the previous block.  
+for (const block of result.rows) { 
+  const expectedHash = generateHash( 
+    buildBlockData( 
+      block.data_type, 
+      block.data_reference_id, 
+      formatStoredTimestamp(block.timestamp), 
+      block.previous_hash 
+    ) 
+  ); 
+  if ( 
+    block.previous_hash !== previousHash || 
+    block.current_hash !== expectedHash 
+  ) { 
+    isValid = false; 
+    break; 
+  } 
+  previousHash = block.current_hash; 
+} 
+Figure 4.22 Code Snippet for Ledger Integrity Validation 
+ 
+ 
+
+
+===== PAGE 28 =====
+85 
+This validation process ensures that unauthorized modification to stored ledger 
+records can be detected. If the ledger validation fails, the system flags the chain as 
+compromised, indicating potential tampering or inconsistency in the recorded data. 
+ 
+Figure 4.23  Ledger Validation Output 
+ 
+4.5 System Workflow 
+The overall workflow of the system begins when a manufacturer accesses the 
+registration dashboard and enters the product details. These details are submitted to the 
+backend server, where the system inserts the product record into the database and generates 
+a unique non-sequential QR identifier. A signed verification payload is then  created using 
+HMAC-SHA256 and embedded into a verification URL. This URL is converted into a QR 
+code image and returned to the frontend for display and download. At the same time, a 
+corresponding registration block is appended to the tamper-evident ledger.  
+
+
+
+===== PAGE 29 =====
+86 
+Once the QR code is distributed with the product, a consumer can scan it using a 
+mobile device. The verification page extracts the signed payload and sends it to the backend 
+verification route. The backend validates the signature before performing any d atabase 
+lookup. If the payload is valid, the backend retrieves the linked product and QR record, stores 
+the scan log entry, evaluates clone-risk behaviour, checks the product status, and returns the 
+final verification result.  
+If the product is active and no suspicious behaviour is detected, the system returns 
+an authentic result. If unusual scan behaviour is detected, the product is classified as 
+suspicious and the frontend displays a recommendation warning. If the product has been 
+revoked, the backend immediately returns a revoked result, and the frontend displays a red 
+high-priority warning state. If the payload is invalid or cannot be matched to a registered 
+record, the system returns an invalid result.  
+Manufacturers can also revoke products through the  product list page. When a 
+revocation request is made, the backend checks that the product is still active, updates the 
+product status to revoked, disables the linked QR code, and records the revocation event in 
+the ledger. Any later verification request f or that QR code will therefore return a revoked 
+result.  
+The workflow demonstrates how the frontend, backend, database, scan logging 
+module, clone detection mechanism, and tamper-evident ledger operate together to support 
+end-to-end product authentication in the prototype.  
+
+
+===== PAGE 30 =====
+87 
+ 
+Figure 4.24 Overall System Workflow of the Product Authentication System 
+ 
+4.6 Discussion 
+This chapter has presented the implementation of the proposed blockchain -inspired 
+product authentication system and demonstrated how the system design described in Chapter 
+3 was successfully translated into a functional prototype. The completed system inte grates 
+key features including product registration, QR code generation, signed payload protection, 
+product verification, scan logging, clone -risk assessment, product revocation, analytics 
+reporting, and tamper-evident ledger recording.  
+The implementation demonstrates that blockchain -inspired mechanisms can be 
+effectively applied in a controlled environment to enhance data integrity and support 
+counterfeit-risk detection without requiring a fully decentralized blockchain network. By 
+combining backend crypto graphic validation, behavioural scan analysis, and hash -linked 
+
+
+
+===== PAGE 31 =====
+88 
+ledger traceability, the system provides a comprehensive end -to-end workflow for product 
+authentication.  
+Furthermore, the frontend and backend components were successfully integrated to 
+support both manufacturer operations and consumer verification. The use of clear 
+verification result states improves usability by enabling users to easily distinguish between 
+authentic, suspicious, revoked, and invalid products. In addition, scan logging and ris k 
+classification provide practical indicators for detecting potential QR code cloning.  
+Overall, the implemented prototype satisfies the intended project scope and provides 
+a suitable basis for system testing and evaluation. The next stage of the report th erefore 
+focuses on validating whether the system performs correctly according to the planned 
+objectives and functional requirements. 
+ 
+ 
+ 
+ 
+ 
+ 

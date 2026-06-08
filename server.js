@@ -60,5 +60,3 @@ app.listen(PORT, "0.0.0.0", () => {
 });
 
 
-// cloudflared tunnel --url http://localhost:3000
-

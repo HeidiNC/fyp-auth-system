@@ -1,0 +1,240 @@
+
+
+===== PAGE 1 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 1 
+ Enhanced Blockchain-Based Product 
+Authentication with Clone-Detection and Revocation 
+Features 
+Heidi NC Motiun 
+Faculty of Computer Science and Information Technology, Universiti Malaysia Sarawak, 94300 Kota 
+Samarahan, Sarawak, Malaysia 
+email: 83996@siswa.unimas.my 
+*Corresponding author 
+Received: DD MM 20YY | Accepted: DD MM 20YY | Early access: DD MM 20YY 
+ 
+Abstract - Counterfeit products continue to pose a significant challenge in modern supply chains, leading to 
+financial losses and potential safety risks. Conventional authentication methods, such as QR codes and 
+centralized databases, are vulnerable to duplication, data manipulation, and the absence of effective 
+revocation mechan isms, which reduces consumer trust. This paper proposes an enhanced product 
+authentication system that applies blockchain -based principles with integrated clone detection and product 
+revocation features. Each product is assigned a unique code linked to a tamper-evident record to ensure data 
+integrity and transparency. Scan activities are monitored to identify abnormal patterns that may indicate 
+duplicated codes. A revocation mechanism enables invalidation of compromised or counterfeit products, 
+ensuring accurate verification results. The system is implemented as a web -based prototype and evaluated 
+based on functionality, verification accuracy, and system response. The results demonstrate improved security, 
+enhanced counterfeit detection, and increased reliability compared to conventional approaches. The proposed 
+system provides a practical and efficient solution for strengthening product authentication in real -world 
+applications. 
+Keywords: Product authentication, blockchain -based principles, counterfeit detec tion, clone detection, 
+product revocation. 
+ 
+1 Introduction 
+The global market is increasingly saturated with counterfeit goods, ranging from electronics to pharmaceuticals. 
+These products not only result in significant economic losses for legitimate brands but also pose serious health 
+and safety risks to consumers. Traditional anti-counterfeiting measures, such as holograms and simple barcodes, 
+are often easily replicated by sophisticated counterfeiters. Furthermore, centralized authentication systems present 
+a single point of failure and are vulnerable to data manipulation. 
+Blockchain technology offers a decentralized, tamper-evident, and transparent approach to securing supply chains. 
+By recording product origins and ownership information on an immutable le dger, manufacturers can provide a 
+digital traceability record for each product. However, a critical limitation remains in the form of physical identifier 
+cloning, particularly QR codes. A genuine QR code can be duplicated and attached to counterfeit items, allowing 
+them to pass basic verification processes. 
+To address this limitation, this paper proposes an enhanced product authentication system that incorporates a clone 
+detection mechanism based on scan frequency and geographical patterns, along with a product revocation feature. 
+These enhancements enable the system to identify suspicious behaviour and invalidate compromised product 
+identifiers, providing a more robust defence against modern counterfeiting techniques. 
+
+
+===== PAGE 2 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 2 
+1.1 Aim and Objectives 
+a) Aim: To develop an e nhanced product authentication system that applies blockchain -based principles 
+with integrated clone detection and product revocation features to improve counterfeit prevention and 
+consumer trust. 
+b) Objective: 
+1. To design a secure mechanism for registering and  verifying product information using unique QR 
+codes. 
+2. To implement clone detection and product revocation mechanisms to identify and manage 
+counterfeit risks. 
+3. To develop a web-based prototype that integrates QR code generation, a tamper-evident ledger, and 
+a product verification interface. 
+2 Literature Review 
+2.1 Product Authentication Systems  
+Product authentication systems are widely adopted in industries vulnerable to counterfeiting. QR code -based 
+verification is commonly used due to its low cost and ease of implementation; however, QR codes are static and 
+can be easily duplicated. Centralized database systems provide ease of management but suffer from limitations in 
+security and transparency. Once a centralized system is compromised, authentication records can be manipulated, 
+reducing system reliability. 
+2.2 Blockchain Technology in Product Authentication  
+Blockchain technology offers decentralization, immutability, and transparency, making it suitable for secure 
+product authentication. Data recorded on a blockchain cannot be altered without consensus, thereby preventing 
+unauthorized modifications. Despite these advantages, many blockchain-based systems lack real-time verification 
+and effective revocation mechanisms for consumer-facing applications. 
+As noted by Kulkar ni et al. (2025), smart contracts can automate verification processes; however, challenges 
+remain in maintaining the integrity of the physical -to-digital link. If a physical identifier such as a QR code is 
+cloned, the system may still validate multiple ins tances as authentic unless additional logic is implemented to 
+detect anomalies. 
+2.3 Research Gap 
+Based on the literature, existing systems lack effective clone detection, dynamic revocation mechanisms, and 
+consumer-friendly verification interfaces. Most studies focus on supply chain tracking rather than end-consumer 
+verification and post-sale product integrity. 
+These limitations highlight the need for an integrated solution that combines tamper-evident ledger mechanisms 
+with real-time QR code verification, clon e detection, and product revocation features. Therefore, this study 
+addresses these gaps by incorporating clone detection and revocation mechanisms into a blockchain-based product 
+authentication system. 
+3 Methodology and System Design 
+3.1 Methodology  
+This project adopts the System Development Life Cycle (SDLC) using the Waterfall Model, which provides a 
+structured and linear process where each phase must be completed before moving to the next. The Waterfall 
+approach is particularly suitable for a blockchain-based authentication system because the requirements are well 
+defined and security is critical.  
+3.2 System Overview 
+The proposed system is a web-based product authentication platform designed to enhance counterfeit prevention 
+through QR code verification, clone detection, and product revocation features. The system involves two primary 
+user roles: manufacturers and consumers. 
+
+
+===== PAGE 3 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 3 
+Manufacturers register products, generate QR codes, and manage product status through an administrative 
+interface. Consumers verify product authenticity by scanning QR codes using a mobile -friendly interface. The 
+backend system processes verification requests, validates tokens, and analyzes scan behaviour. 
+A tamper-evident ledger records key events such as product registration, verification, a nd revocation, ensuring 
+data integrity and traceability. The system operates alongside a relational database, where detailed product 
+information is stored. 
+3.3 System Architecture and Design  
+The system architecture consists of three main components: the user interface, backend server, and data storage 
+layer. The user interface includes both the admin dashboard and consumer verification page. The backend server 
+handles authentication, QR code processing, and logic execution.  The data storage layer includes a re lational 
+database and a tamper-evident ledger. The database stores detailed product and user information, while the ledger 
+records critical events in a chained structure using hash-based linking to ensure integrity. 
+ 
+Figure 3.1 System Architecture of the Proposed Product Authentication System 
+3.4 System Workflow 
+The system workflow begins with product registration by the manufacturer, followed by QR code generation. 
+When a consumer scans the QR code, the system validates the token and retrieves product information. 
+The system then checks the product status and analyses scan behaviour to detect potential cloning. Based on the 
+verification result, the system displays the product status as authentic, suspicious, revoked, or invalid. 
+ 
+Figure 3.2 System Workflow for Product Authentication Process 
+
+
+
+===== PAGE 4 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 4 
+3.5 Clone Detection Logic 
+The clone detection mechanism analyzes scan behaviour to identify suspicious patterns. This includes monitoring 
+repeated scans within short time intervals and scans from geographically distant locations. 
+If abnormal patterns are detected, the system flags the product as suspicious. This approach enhances security by 
+identifying duplicated QR codes that would otherwise pass standard verification. 
+3.6 Product Revocation Feature  
+The product revocation feature allows manufacturers to invalidate compromised, recalled, or counterfeit products. 
+Once revoked, the product status is updated in the system and recorded in the tamper-evident ledger. 
+During verification, revoked products are clearly indicated to consumers, ensuring accurate and reliable 
+authentication results. 
+4 Implementation 
+4.1 System Development 
+The proposed system was developed as a web -based prototype that integ rates QR code generation, backend 
+verification, clone detection logic, and a tamper -evident ledger. The system is designed to simulate a secure 
+product authentication environment while maintaining practical implementation constraints 
+4.2 System Modules 
+The implementation consists of two main modules: 
+ Admin Module: Allow manufacturers to register products, generate QR codes, and manage product 
+status, including revocation. 
+ Consumer Module: Provides a mobile-friendly interface for users to scan QR codes and verify product 
+authenticity in real time. 
+4.3 Backend Processing 
+The backend system handles all verification processes, including QR token validation, product status checking, 
+and scan behaviour analysis. It also manages interactions between the database and the tamper-evident ledger. 
+4.4 Data Management 
+The system uses a relational database to store product and user information, while the tamper -evident ledger 
+records critical events such as product registration, verification, and revocation to ensure data integrity an d 
+traceability. 
+5 Testing and Evaluation 
+The system was evaluated based on its functional performance and its ability to meet the defined objectives, 
+including product registration, verification accuracy, clone detection, and revocation handling. 
+5.1 Functional Testing 
+Functional testing was conducted to ensure that all system components operated correctly. This includes validating 
+product registration, QR code generation, and the verification process. The system successfully identified valid 
+and invalid QR codes, demonstrating consistent and reliable authentication performance. 
+5.2 Verification and Security Testing  
+The QR code verification mechanism was tested under multiple scenarios, including valid, invalid, and revoked 
+product cases. The system achieved high accuracy in distinguishing product status, ensuring correct classification 
+during verification. 
+
+
+===== PAGE 5 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 5 
+The clone detection mechanism was evaluated by simulating repeated scans and abnormal access patterns. A 
+predefined threshold based on scan frequency and behavi oural variation was applied to identify suspicious 
+activity. The results indicate that the system effectively detects duplicated QR code usage and flags it as 
+suspicious. 
+The product revocation feature was also tested by marking selected products as revoked. During verification, all 
+revoked products were correctly identified and displayed, confirming the reliability of the revocation mechanism. 
+5.3 Usability Evaluation 
+Usability testing was conducted with multiple users to evaluate system interaction. Most users were able to 
+complete verification tasks successfully with minimal guidance. Feedback indicates that the system interface is 
+user-friendly, with clear and understandable authentication results. 
+Overall, users reported a high level of satisfaction and confidence when using the system for product verification. 
+5.4 Results and Discussion 
+The evaluation results demonstrate that the proposed system achieves reliable product authentication and 
+effectively addresses key limitations of traditional methods. The in tegration of clone detection enhances the 
+system’s ability to identify duplicated QR codes, while the revocation feature ensures that compromised products 
+are accurately flagged.  Overall, the system improves transparency, strengthens counterfeit prevention , and 
+increases user confidence in product authenticity. 
+6 Conclusions 
+This study proposes an enhanced product authentication system that applies blockchain -based principles by 
+integrating QR code verification with clone detection and product revocation features. By combining immutability 
+with scan pattern analysis and administrative control, the system addresses key limitations of traditional 
+authentication methods such as barcodes, holograms, and centralized databases. 
+The results indicate that the system i s capable of providing secure product registration, real -time verification, 
+detection of suspicious duplicate scans, and effective revocation of compromised products. These features 
+collectively improve transparency, strengthen counterfeit prevention, and enhance consumer trust in modern 
+supply chains. 
+Future work may include deployment on a live blockchain network and integration with mobile applications to 
+further improve scalability and usability. 
+Acknowledgements 
+The author would like to express sincere gratitude to the project supervisor for their continuous guidance, valuable 
+advice, and constructive feedback throughout the development of this research. Special appreciation is extended 
+to all questionnaire respondents, whose insights were instrumental in the system design and development phases. 
+Finally, the author acknowledges the support and motivation provided by family and friends throughout the 
+duration of this project. 
+Conflict of interest 
+The authors declare that they have no known competing fina ncial interests or personal relationships that could 
+have appeared to influence the work reported in this paper. 
+References 
+Kulkarni, D.P., Manwar, T. V., Naykawadi, F. J., & Patil, P. M. (2025). Fake product identification using 
+blockchain. In Journal Pub lication of International Research for Engineering and Management. JOIREM. 
+Retrieved from 4/J_KBDOl5Km.pdf https://joirem.com/wp -
+content/uploads/journal/published_paper/volume-05/issue  
+Mallegowda, M., Kanavalli, A., Thippeswamy, M. N., Gupta, K., Khandelw al, L., Bhattad, V., & Vaswani, H. 
+(2022). Fake product identification system using blockchain. IEEE Conference Publication. 
+https://doi.org/10.1109/i4c57141.2022.10057923  
+
+
+===== PAGE 6 =====
+Journal of Computing and Social Informatics (Vol X No X, 20YY) 
+ 
+ 6 
+Nagar, R., Chaturvedi, N., & Prabakaran, J. (2023). Product authentication system using blockchain. IEEE 
+Conference Publication. https://doi.org/10.1109/icnwc57852.2023.10127447  
+Shankar, B. P., & Jayavadivel, R. (2019, December 12). A survey of counterfeit product detection. International 
+Journal of Scientific & Technology Research, 8( 12), 2958-2962. Retrieved from https://www.ijstr.org/final 
+print/dec2019/A-Survey-Of-Counterfeit-Product-Detection.pdf  
+Tiwari, K., Patil, N., Gupta, A., Sabale, A., & Lomte, V. (2023, May). Fake product detection using blockchain 
+technology. In International Research Journal of Modernization in Engineering Technology and Science (pp. 
+2582–5208). Retrieved from 
+https://www.irjmets.com/uploadedfiles/paper/issue_5_may_2023/41058/final/fin_irjmets 1685631927.pdf  
+Wasnik, K., Sondawle, I., Wani, R., & Pulgam, N . (2022). Detection of counterfeit products using blockchain. 
+ITM Web of Conferences, 44, 03015. https://doi.org/10.1051/itmconf/20224403015 
+ 
